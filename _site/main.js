@@ -478,7 +478,7 @@ function setAnyInputValue(inputElement, value) {
 function getRenderedSection(id) {
     let template = outputTemplates[id]
 
-    // get comsent if needed
+    // get consent if needed
     if (id == 'consent') {
         let consentSwitches = document.querySelectorAll('section#consent input[type="checkbox"]')
         let consent = ''
@@ -492,6 +492,19 @@ function getRenderedSection(id) {
         }
         consent = consent.trim()
         template = template.replace('{{consent-output}}', consent)
+    }
+
+    if (id == 'medicalhx') {
+        let output = ""
+
+        for (let d of document.querySelectorAll('clinic-diagnosis')) {
+            output += d.renderText()
+            output += '\n'
+        }
+
+        output = output.trim()
+
+        template = template.replace('{{pmhx}}', output)
     }
 
     // replace known values
@@ -590,24 +603,6 @@ for (let c of allCalculators) {
         }
     })
 }
-
-// customElements.define('sim-readout', class extends HTMLElement {
-//     constructor () {
-//         super()
-//         // listen for changes
-//         self.inputs = self.querySelector('input')
-
-//         // update score
-//     }
-
-//     attributeChangedCallback (name, oldValue, newValue) {
-
-//     }
-    
-//     static get observedAttributes () {
-//         return []
-//     }
-// })
 
 //    _____         _     _____    _ _ _   _                                       
 //   |_   _|____  _| |_  | ____|__| (_) |_(_)_ __   __ _                           
@@ -758,69 +753,6 @@ smokingInput.addEventListener('input', (e) => {
 })
 
 
-//    ____        _          ____               _     _                            
-//   |  _ \  __ _| |_ __ _  |  _ \ ___ _ __ ___(_)___| |_ ___ _ __   ___ ___       
-//   | | | |/ _` | __/ _` | | |_) / _ \ '__/ __| / __| __/ _ \ '_ \ / __/ _ \      
-//   | |_| | (_| | || (_| | |  __/  __/ |  \__ \ \__ \ ||  __/ | | | (_|  __/      
-//   |____/ \__,_|\__\__,_| |_|   \___|_|  |___/_|___/\__\___|_| |_|\___\___|      
-
-// get from localStorage at startup
-let persistentDataStore
-try {
-    persistentDataStore = JSON.parse(localStorage.getItem('clinic-data') || '') // JSON parser chokes on empty string if clinic-data isn't stored
-} catch {
-    persistentDataStore = {}
-}
-
-// establish proxy
-let persistentDataProxy = new Proxy(persistentDataStore, {
-    get(object, key, receiver) {
-        return object[key]
-    },
-    set(object, key, value) {
-        // Update UI
-
-        // Update data model
-        object[key] = value
-
-        // Emit event
-
-        // Persist data
-        localStorage.setItem('clinic-data', JSON.stringify(object))
-
-        // Send to beagle for sniffing
-        beagle.postMessage({
-            inputData: object,
-        })
-    }
-})
-
-// display persisted data on load
-let allInputs = document.querySelectorAll('[clinic-parameter]')
-for (let i of allInputs) {
-    // apply any stored values
-    let parameter = i.getAttribute('clinic-parameter')
-    let storedValue = persistentDataProxy[parameter]
-    if (storedValue) {
-        setAnyInputValue(i, storedValue)
-    }
-    // dispatch input event
-    i.dispatchEvent(new Event('input', {'bubbles': true}))
-}
-
-// give Beagle its intial sniff
-beagle.postMessage({
-    inputData: persistentDataStore,
-})
-
-// listen for input events on any element with clinic-parameter
-document.addEventListener('input', (e) => {
-    if (e.target.hasAttribute('clinic-parameter')) {
-        persistentDataProxy[e.target.getAttribute('clinic-parameter')] = getAnyInputValue(e.target)
-    }
-})
-
-
 
 // let allSections = document.querySelectorAll('section')
 // for (let s of allSections) {
@@ -896,14 +828,6 @@ document.querySelector('#reset')?.addEventListener('click', (e) => {
         window.location.reload()
     }
 })
-
-//     ____                    ____        _   _                                   
-//    / ___|___  _ __  _   _  | __ ) _   _| |_| |_ ___  _ __  ___                  
-//   | |   / _ \| '_ \| | | | |  _ \| | | | __| __/ _ \| '_ \/ __|                 
-//   | |__| (_) | |_) | |_| | | |_) | |_| | |_| || (_) | | | \__ \                 
-//    \____\___/| .__/ \__, | |____/ \__,_|\__|\__\___/|_| |_|___/                 
-//              |_|    |___/                                                       
-
 
 //    _____         _     _____                            _                       
 //   |_   _|____  _| |_  | ____|_  ___ __   __ _ _ __   __| | ___ _ __             
@@ -1036,35 +960,55 @@ quickFindSearch.addEventListener('input', (e) => {
         quickFindResults.firstChild.setAttribute('aria-selected', 'true')
     }
 })
-quickFindSearch.addEventListener("keydown", (e) => {
-    if (e.key == "Enter") {
-        quickFindResults.querySelector('[aria-selected]')?.click()
-    }
-    if (e.key == "ArrowDown") {
-        e.preventDefault()
-        let currentlySelected = quickFindResults.querySelector('[aria-selected]')
-        let nextElement = currentlySelected.nextElementSibling
-        currentlySelected.removeAttribute('aria-selected')
-        if (nextElement) {
-            // go to next
-            nextElement.setAttribute('aria-selected', 'true')
-        } else {
-            // go to top
-            quickFindResults.firstElementChild.setAttribute('aria-selected', 'true')
-        }
-    }
-    if (e.key == "ArrowUp") {
-        e.preventDefault()
-        let currentlySelected = quickFindResults.querySelector('[aria-selected]')
-        let previousElement = currentlySelected.previousElementSibling
-        currentlySelected.removeAttribute('aria-selected')
-        if (previousElement) {
-            // go to next
-            previousElement.setAttribute('aria-selected', 'true')
-        } else {
-            // go to top
-            quickFindResults.lastElementChild.setAttribute('aria-selected', 'true')
-        }
+
+
+customElements.define('clinic-searchresults', class extends HTMLElement {
+    constructor () {
+        super()
+        this.resultsSelector = this.getAttribute('results') || 'ul'
+        this.resultsContainer = this.querySelector(this.resultsSelector)
+
+        this.searchSelector = this.getAttribute('search') || 'input[type="search"]'
+        this.searchContainer = this.querySelector(this.searchSelector)
+
+        
+        this.addEventListener("keydown", (e) => {
+            // ENTER
+            if (e.key == "Enter") {
+                this.resultsContainer.querySelector('[aria-selected]')?.click()
+            }
+
+            // DOWN
+            if (e.key == "ArrowDown") {
+                e.preventDefault()
+                let currentlySelected = this.resultsContainer.querySelector('[aria-selected]')
+                console.log(currentlySelected)
+                let nextElement = currentlySelected?.nextElementSibling
+                currentlySelected.removeAttribute('aria-selected')
+                if (nextElement) {
+                    // go to next
+                    nextElement.setAttribute('aria-selected', 'true')
+                } else {
+                    // go to top
+                    this.resultsContainer.firstElementChild.setAttribute('aria-selected', 'true')
+                }
+            }
+
+            // UP
+            if (e.key == "ArrowUp") {
+                e.preventDefault()
+                let currentlySelected = this.resultsContainer.querySelector('[aria-selected]')
+                let previousElement = currentlySelected?.previousElementSibling
+                currentlySelected.removeAttribute('aria-selected')
+                if (previousElement) {
+                    // go to next
+                    previousElement.setAttribute('aria-selected', 'true')
+                } else {
+                    // go to top
+                    this.resultsContainer.lastElementChild.setAttribute('aria-selected', 'true')
+                }
+            }
+        })
     }
 })
 
@@ -1095,26 +1039,6 @@ document.querySelector('#quick-add-button')?.addEventListener('click', (e) => {
 //   |____/ \___|_|  \___/|_|_|___/ .__/ \__, |                                    
 //                                |_|    |___/                                     
 
-// customElements.define('clinic-scrollspy', class extends HTMLElement {
-//     constructor () {
-//         super()
-//         // listen for changes
-//         self.targetSelector = self.querySelector('target-element-selector')
-//         self.inputs = self.querySelector('input')
-
-//         // update score
-//     }
-
-//     attributeChangedCallback (name, oldValue, newValue) {
-
-//     }
-    
-//     static get observedAttributes () {
-//         return []
-//     }
-// })
-
-
 document.body.addEventListener('click', (e) => {
     // any click on a tab selector should open that tab
     // adding a 'click' event listener to the li itself doesn't pick up click that landed on text or icons
@@ -1140,9 +1064,9 @@ document.body.addEventListener('click', (e) => {
     }
 
     // any clicks on a <section> that don't land on something focus-able should put focus the first input
-    if (e.target.matches('section, section *:not(:focus, button.section-copy)')) {
-        e.target?.closest('section')?.querySelector('input, select, textarea, label')?.focus({preventScroll: true})
-    }
+    // if (e.target.matches('section, section *:not(:focus, button.section-copy)')) {
+    //     e.target?.closest('section')?.querySelector('input, select, textarea, label')?.focus({preventScroll: true})
+    // }
 })
 
 document.addEventListener('mousedown', (e) => {
@@ -1209,3 +1133,332 @@ function setScrollSpySelection(id) {
     buttonToHighlight.setAttribute('aria-selected', true)
 
 }
+
+//    _   _ _     _             _                                                  
+//   | | | (_)___| |_ ___  _ __(_) __ _ _ __                                       
+//   | |_| | / __| __/ _ \| '__| |/ _` | '_ \                                      
+//   |  _  | \__ \ || (_) | |  | | (_| | | | |                                     
+//   |_| |_|_|___/\__\___/|_|  |_|\__,_|_| |_|                                     
+                                                  
+let diagnosisList = document.querySelector('#diagnosis-list')
+let diagnosisSearchBox = document.querySelector('#diagnosis-search input')
+let diagnosisSearchResultsList = document.querySelector('#diagnosis-results ul')
+let allDiagnoses = [
+    {
+        matchable_string: "T2DM type two 2 diabetes mellitus",
+        name: "T2DM",
+        id: "diagnosis-t2dm",
+        html: `
+            <div class="hstack">
+                <label>
+                    Hypoglycaemia Aware
+                    <input type="text" diagnosis-parameter="Hypo awareness">
+                </label>
+                <label>
+                    HbA1c (%)
+                    <input type="number" diagnosis-parameter="HbA1c" clinic-sync="hba1c">
+                </label>
+            </div>
+            <label>
+                Microvascular Complications
+                <input type="text" diagnosis-parameter="Microvascular complications">
+            </label>
+            <label>
+                Microvascular Complications
+                <input type="text" diagnosis-parameter="Macrovascular complications">
+            </label>`
+    },
+    {
+        matchable_string: "HF congestive cardiac heart failure",
+        name: "Heart Failure",
+        id: "diagnosis-ccf",
+        html: `
+            <div class="hstack">
+                <label>
+                    NYHA
+                    <div class="selectbox">
+                        <select diagnosis-parameter="NYHA">
+                            <option value="" selected disabled></option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Stents in Place
+                    <input type="number" diagnosis-parameter="Stents">
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "ischaemic heart disease NSTEMI myocardial infarction",
+        name: "Ischaemic Heart Disease",
+        id: "diagnosis-ihd",
+        html: `
+            <div class="hstack">
+                <label>
+                    AMI in Last 6 Months
+                    <input type="text" diagnosis-parameter="Recent MI">
+                </label>
+                <label>
+                    Stents in Place
+                    <input type="number" diagnosis-parameter="Stents">
+                </label>
+            </div>`
+    },
+]
+
+// UTILS
+function escapeHTML(html) {
+    // https://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities
+    // https://stackoverflow.com/a/55081825
+    return new Option(html).innerHTML
+}
+
+// Create custom element
+customElements.define('clinic-diagnosis', class extends HTMLElement {
+    constructor () {
+        super()
+    }
+
+    connectedCallback() {
+        this.setAttribute('clinic-parameter', this.data['id'])
+        this.innerHTML = `
+            <div class="clinic-diagnosis-top">
+                <label>
+                    <input type="text" class="diagnosis-title" diagnosis-parameter="name" value="${this.data['name'] || ''}">
+                </label>
+                <button class="clinic-diagnosis-edit" tabindex="3" onclick="this.previousElementSibling.focus()">Edit</button>
+                <button class="clinic-diagnosis-close" tabindex="3">Close</button>
+            </div>
+            <div class="clinic-diagnosis-body vstack">
+                ${this.data['html'] || ''}
+                <label>
+                    <textarea type="text" class="bigbox short" placeholder="Details" diagnosis-parameter="other-details"></textarea>
+                </label>
+            </div>
+            <div class="clinic-diagnosis-bottom">
+                <button onclick="this.closest('clinic-diagnosis')?.delete()">Delete</button>
+            </div>
+        `
+        for (let key in this.data) {
+            // check for a target
+            let targetElement = this.querySelector(`.clinic-diagnosis-body [diagnosis-parameter="${key}"]`)
+
+            // abort if none is found
+            if (!targetElement) continue
+
+            // attempt to re-insert it
+            setAnyInputValue(targetElement, this.data[key])
+        }
+
+        // save to localStorage, the cheeky way
+        this.querySelector('[diagnosis-parameter]').dispatchEvent(new Event('input', {bubbles: true}))
+    }
+
+    renderText() {
+        // return text
+        let data = this.serialise()
+        let output = ""
+
+        // get name
+        output += `- ${data['name']}`
+
+        // delete surplus keys
+        delete data['name']
+        delete data['id']
+        
+        // add regular details
+        for (let d in data) {
+            if (d == 'other-details') continue
+            output = output + `\n--> ${d}: ${data[d]}`
+        }
+
+        // add in other details
+        if (data['other-details']) {
+            output += `\n${data['other-details']}`
+        }
+
+        return output
+    }
+
+    serialise() {
+        let dataDump = {
+            id: this.getAttribute('clinic-parameter'),
+        }
+        for (let input of this.querySelectorAll('[diagnosis-parameter]')) {
+            let attr = input.getAttribute('diagnosis-parameter')
+            dataDump[attr] = getAnyInputValue(input)
+        }
+        return dataDump
+    }
+
+    delete() {
+        let answer = confirm(`Delete "${this.serialise()['name']}"?`)
+        if (answer) {
+            delete persistentDataProxy[this.getAttribute('clinic-parameter')]
+            this.remove()
+        }
+    }
+})
+
+function constructClinicDiagnosis(data) {
+    let newElement = document.createElement('clinic-diagnosis')
+    newElement.data = data
+    return newElement
+}
+
+// Handle expansion/shrinking of each diagnosis
+
+function setFocusedDiagnosis(target) {
+    for (let t of diagnosisList.querySelectorAll('clinic-diagnosis')) {
+        t.removeAttribute('aria-selected')
+    }
+    if (target) {
+        target.setAttribute('aria-selected', true)
+    }
+}
+
+diagnosisList.addEventListener('focusin', (e) => {
+    let targetDiagnosis = e.target.closest('clinic-diagnosis')
+    setFocusedDiagnosis(targetDiagnosis)
+})
+diagnosisList.addEventListener('focusout', (e) => {
+    setFocusedDiagnosis(null)
+})
+
+// ESCAPE to go back to search
+diagnosisList.addEventListener('keydown', (e) => {
+    if (e.key == "Escape") {
+        diagnosisSearchBox.focus()
+    }
+})
+
+// SEARCH RESULTS
+
+function insertSearchResult(target, data) {
+    let newResult = document.createElement('li')
+    newResult.innerHTML = `${data['name']}<button>Add to PMHx</button></li>`
+    newResult.data = data
+    newResult.onclick = (e) => {
+        // Create new diagnosis markup with data from target <li>
+        let newDiagnosisElement = constructClinicDiagnosis(data)
+        diagnosisList.insertAdjacentElement("afterbegin", newDiagnosisElement)
+
+        // Open it and set focus on the first non-title input element (be it a textarea or an input)
+        setFocusedDiagnosis(newDiagnosisElement)
+        setTimeout(() => { newDiagnosisElement.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
+
+        diagnosisSearchBox.value = ''
+        diagnosisSearchBox.dispatchEvent(new Event('input'))
+    }
+    target.insertAdjacentElement("beforeend", newResult)
+}
+
+diagnosisSearchBox.addEventListener('input', (e) => {
+    // Find matches with fuzzysort
+    let searchString = e.target.value
+    let results = fuzzysort.go(searchString, allDiagnoses, {
+        threshold: 0,
+        limit: 3,
+        all: false,
+        key: "matchable_string",
+    })
+
+    // Clear stale results list
+    diagnosisSearchResultsList.innerHTML = ''
+    
+    // Post new results list
+    for (let r of results) {
+        insertSearchResult(diagnosisSearchResultsList, r.obj)
+    }
+
+    // Post unedited query string as the last option
+    if (searchString.length > 0) {
+        insertSearchResult(diagnosisSearchResultsList, { name: escapeHTML(searchString), id: `diagnosis-user-defined-${Math.floor(Math.random() * 1000000000)}` })
+    }
+
+    // Mark first result as "selected"
+    diagnosisSearchResultsList?.firstElementChild?.setAttribute('aria-selected', 'true')
+})
+
+//    ____        _          ____               _     _                            
+//   |  _ \  __ _| |_ __ _  |  _ \ ___ _ __ ___(_)___| |_ ___ _ __   ___ ___       
+//   | | | |/ _` | __/ _` | | |_) / _ \ '__/ __| / __| __/ _ \ '_ \ / __/ _ \      
+//   | |_| | (_| | || (_| | |  __/  __/ |  \__ \ \__ \ ||  __/ | | | (_|  __/      
+//   |____/ \__,_|\__\__,_| |_|   \___|_|  |___/_|___/\__\___|_| |_|\___\___|      
+
+// get from localStorage at startup
+let persistentDataStore
+try {
+    persistentDataStore = JSON.parse(localStorage.getItem('clinic-data') || '') // JSON parser chokes on empty string if clinic-data isn't stored
+} catch {
+    persistentDataStore = {}
+}
+
+// establish proxy
+let persistentDataProxy = new Proxy(persistentDataStore, {
+    get(object, key, receiver) {
+        return object[key]
+    },
+    set(object, key, value) {
+        // Update UI
+
+        // Update data model
+        object[key] = value
+
+        // Emit event
+
+        // Persist data
+        localStorage.setItem('clinic-data', JSON.stringify(object))
+
+        // Send to beagle for sniffing
+        beagle.postMessage({
+            inputData: object,
+        })
+    },
+    deleteProperty(object, key) {
+        delete object[key]
+        localStorage.setItem('clinic-data', JSON.stringify(object))
+        return true
+    }
+})
+
+// display persisted data on load
+for (let p in persistentDataProxy) {
+    let storedData = persistentDataProxy[p]
+    
+    if (p.startsWith('diagnosis-')) {
+        // find HTML if there is any
+        let genericDiagnosisData = allDiagnoses.find((d) => d['id'] == storedData['id'])
+        storedData['html'] = genericDiagnosisData?.html || ''
+        
+        let newDiagnosisElement = constructClinicDiagnosis(storedData)
+        diagnosisList.insertAdjacentElement("afterbegin", newDiagnosisElement)
+
+        continue
+    }
+
+    let targetInputs = document.querySelectorAll(`[clinic-parameter="${p}"]`)
+    for (let i of targetInputs) {
+        setAnyInputValue(i, storedData)
+    }
+}
+
+// give Beagle its intial sniff
+beagle.postMessage({
+    inputData: persistentDataStore,
+})
+
+// listen for input events on any element with clinic-parameter
+document.addEventListener('input', (e) => {
+    if (e.target.hasAttribute('clinic-parameter')) {
+        persistentDataProxy[e.target.getAttribute('clinic-parameter')] = getAnyInputValue(e.target)
+    }
+    if (e.target.hasAttribute('diagnosis-parameter')) {
+        let parentDiagnosis = e.target.closest('clinic-diagnosis')
+        persistentDataProxy[parentDiagnosis.getAttribute('clinic-parameter')] = parentDiagnosis.serialise()
+    }
+})
