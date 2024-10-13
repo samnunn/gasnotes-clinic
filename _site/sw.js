@@ -1,4 +1,4 @@
-let version = "13"
+let version = "14"
 
 let cacheName = `v${version}_data`
 
@@ -16,8 +16,10 @@ let cachedAssetPaths = [
     // DATA
     'oplist.json',
     // IMAGES
-    'favicon.ico',
-    'chevrons-down.svg',
+    'icons/gasper.png',
+    'icons/gasper_favicon.png',
+    'icons/gasper_thinking.png',
+    'icons/chevron_down.svg',
     'icons/colour_zap.svg',
     'icons/colour_search.svg',
     'icons/colour_bookmark.svg',
@@ -29,8 +31,8 @@ let cachedAssetPaths = [
     'icons/colour_pill.svg',
     'icons/colour_check_circle.svg',
     'icons/colour_arrow_down_circle.svg',
-    'icons/x_octagon.svg',
     'icons/colour_edit.svg',
+    'icons/x_octagon.svg',
     'icons/propeller_hat.svg',
     'icons/github-mark.svg',
     'clinic_data_safety.svg',
@@ -38,7 +40,6 @@ let cachedAssetPaths = [
     'icons/arrow_up.svg',
     'icons/arrow_down.svg',
     'icons/arrow_down_left.svg',
-    'icons/gasper.png',
 ]
 
 // install (pre-activation) event
