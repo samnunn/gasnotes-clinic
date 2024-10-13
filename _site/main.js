@@ -498,6 +498,8 @@ function getRenderedSection(id) {
         let output = ""
 
         for (let d of document.querySelectorAll('clinic-diagnosis')) {
+            // if (!getAnyInputValue(d)) continue
+
             output += d.renderText()
             output += '\n'
         }
@@ -1166,7 +1168,7 @@ let allDiagnoses = [
                 <label>
                     Insulin Dependent
                     <div class="selectbox">
-                        <select diagnosis-parameter="Hypoglycaemia awareness">
+                        <select diagnosis-parameter="Insulin dependent">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1885,9 +1887,15 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
         delete data['id']
         
         // add regular details
-        for (let d in data) {
-            if (d == 'other-details') continue
-            output = output + `\n    - ${d}: ${data[d]}`
+        for (let key in data) {
+            if (key == 'other-details') continue
+            
+            // skip blank lines
+            let value = data[key]
+            if (`${value}`.length == 0) continue
+
+            // append to output
+            output = output + `\n    - ${key}: ${value}`
         }
 
         // add in other details
