@@ -613,32 +613,32 @@ for (let c of allCalculators) {
 
 // AUTO DOT POINTS
 let validDotPoints = ['- ', '--> ']
-let allTextAreas = document.querySelectorAll('textarea.bigbox')
-for (let a of allTextAreas) {
-    a.addEventListener('keydown', (e) => {
-        if (e.key == 'Enter') {
-            let textarea = e.target
-            let cursorPosition = textarea.selectionStart
-            let currentLine = textarea.value.substring(0, cursorPosition).split('\n').pop().trim()
-            let dotPoint
-            for (let d of validDotPoints) {
-                if (currentLine.startsWith(d)) {
-                    dotPoint = d
-                    break
-                }
-            }
-        
-            if (dotPoint) {
-                let newLineText = `\n${dotPoint}`
-                textarea.value = textarea.value.substring(0, cursorPosition) + newLineText + textarea.value.substring(cursorPosition)
-                textarea.selectionStart = cursorPosition + newLineText.length
-                textarea.selectionEnd = cursorPosition + newLineText.length
-                textarea.closest('section')?.dispatchEvent(new Event('input'))
-                e.preventDefault()
+document.body.addEventListener('keydown', (e) => {
+    if (!e.target.matches('textarea.bigbox')) return
+
+    if (e.key == "Enter") {
+        let textarea = e.target
+        let cursorPosition = textarea.selectionStart
+        let currentLine = textarea.value.substring(0, cursorPosition).split('\n').pop().trim()
+        let dotPoint
+        for (let d of validDotPoints) {
+            if (currentLine.startsWith(d)) {
+                dotPoint = d
+                break
             }
         }
-    })
-}
+    
+        if (dotPoint) {
+            let newLineText = `\n${dotPoint}`
+            textarea.value = textarea.value.substring(0, cursorPosition) + newLineText + textarea.value.substring(cursorPosition)
+            textarea.selectionStart = cursorPosition + newLineText.length
+            textarea.selectionEnd = cursorPosition + newLineText.length
+            textarea.closest('section')?.dispatchEvent(new Event('input'))
+            e.preventDefault()
+        }
+    }
+
+})
 
 //    ____                  _       _    ____                                      
 //   / ___| _ __   ___  ___(_) __ _| |  / ___|__ _ ___  ___  ___                   
