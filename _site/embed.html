@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Embed Test</title>
+</head>
+<body>
+    <label>
+        <input id="to_embed" type="text">
+        <input id="to_compare" type="text">
+    </label>
+    <button id="go">Go</button>
+    <textarea name="" id="output"></textarea>
+    <script type="module">
+        let inputBox = document.querySelector('#to_embed')
+        let compareBox = document.querySelector('#to_compare')
+        let goButton = document.querySelector('#go')
+        let outputBox = document.querySelector('#output')
+        
+        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+        
+        const pipe = await pipeline(
+        'feature-extraction',
+        'Supabase/gte-small',
+        )
+        
+        function cosinesim(A, B) {
+            var dotproduct = 0;
+            var mA = 0;
+            var mB = 0;
+            
+            for(var i = 0; i < A.length; i++) {
+                dotproduct += A[i] * B[i];
+                mA += A[i] * A[i];
+                mB += B[i] * B[i];
+            }
+            
+            mA = Math.sqrt(mA);
+            mB = Math.sqrt(mB);
+            var similarity = dotproduct / (mA * mB);
+            
+            return similarity;
+        }
+        
+        async function runEmbedding(t) {
+            // Generate the embedding from text
+            const output = await pipe(t, {
+                pooling: 'mean',
+                normalize: true,
+            })
+            
+            // Extract the embedding output
+            const embedding = Array.from(output.data);
+            
+            // Display
+            // outputBox.value = embedding
+
+            return embedding
+        }
+        
+        goButton.addEventListener('click', async (e) => {
+            let first = await runEmbedding(inputBox.value)
+            let second = await runEmbedding(compareBox.value)
+
+            let cosdiff = cosinesim(first, second)
+
+            outputBox.value = cosdiff
+        })
+    </script>
+    
+</body>
+</html>

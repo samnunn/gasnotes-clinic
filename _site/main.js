@@ -766,20 +766,18 @@ smokingInput.addEventListener('input', (e) => {
 //   |____/ \__, |_| |_|\___|                                                      
 //          |___/                                                                  
 
-let allSyncedParameters = document.querySelectorAll('[clinic-sync]')
-for (let i of allSyncedParameters) {
-    i.addEventListener('input', (e) => {
-        let allTargets = document.querySelectorAll(`[clinic-sync="${e.target.getAttribute('clinic-sync')}"]`)
-        let value = getAnyInputValue(e.target)
-        for (let t of allTargets) {
-            if (t == e.target) continue
-            setAnyInputValue(t, value)
-            // prompt re-render of the enclosing <section>'s template
-            t.closest('[clinic-calculator]')?.dispatchEvent(new Event('input')) // update calculators
-            t.closest('section')?.dispatchEvent(new Event('input')) // render output
-        }
-    })
-}
+document.body.addEventListener('input', (e) => {
+    if (!e.target.hasAttribute('clinic-sync')) return
+
+    let syncAttribute = e.target.getAttribute('clinic-sync')
+    let syncValue = getAnyInputValue(e.target)
+    let syncTargets = document.querySelectorAll(`[clinic-sync="${syncAttribute}"]`)
+    for (let t of syncTargets) {
+        if (t == e.target) continue
+        setAnyInputValue(t, syncValue)
+        t.dispatchEvent(new Event('input'))
+    }
+})
 
 //    ____                      _                 _                                
 //   |  _ \  _____      ___ __ | | ___   __ _  __| | ___ _ __                      
@@ -982,7 +980,6 @@ customElements.define('clinic-searchresults', class extends HTMLElement {
             if (e.key == "ArrowDown") {
                 e.preventDefault()
                 let currentlySelected = this.resultsContainer.querySelector('[aria-selected]')
-                console.log(currentlySelected)
                 let nextElement = currentlySelected?.nextElementSibling
                 currentlySelected.removeAttribute('aria-selected')
                 if (nextElement) {
@@ -1145,18 +1142,46 @@ let diagnosisSearchBox = document.querySelector('#diagnosis-search input')
 let diagnosisSearchResultsList = document.querySelector('#diagnosis-results ul')
 let allDiagnoses = [
     {
-        matchable_string: "T2DM type two 2 diabetes mellitus",
+        matchable_string: "T2DM type two 2 II insulin dependent diabetes mellitus IDDM",
         name: "T2DM",
         id: "diagnosis-t2dm",
         html: `
             <div class="hstack">
                 <label>
                     Hypoglycaemia Aware
-                    <input type="text" diagnosis-parameter="Hypo awareness">
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Hypoglycaemia awareness">
+                            <option value="" selected></option>
+                            <option value="intact">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
                 </label>
                 <label>
-                    HbA1c (%)
+                    HbA1c
                     <input type="number" diagnosis-parameter="HbA1c" clinic-sync="hba1c">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Insulin Dependent
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Hypoglycaemia awareness">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    "Brittle" Disease
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Brittle disease">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
                 </label>
             </div>
             <label>
@@ -1169,7 +1194,59 @@ let allDiagnoses = [
             </label>`
     },
     {
-        matchable_string: "HF congestive cardiac heart failure",
+        matchable_string: "T1DM type one 1 I diabetes mellitus",
+        name: "T1DM",
+        id: "diagnosis-t1dm",
+        html: `
+            <div class="hstack">
+                <label>
+                    Hypoglycaemia Aware
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Hypoglycaemia awareness">
+                            <option value="" selected></option>
+                            <option value="intact">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    HbA1c
+                    <input type="number" diagnosis-parameter="HbA1c" clinic-sync="hba1c">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Insulin Pump
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Insulin pump in use">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    "Brittle" Disease
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Brittle disease">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <label>
+                Microvascular Complications
+                <input type="text" diagnosis-parameter="Microvascular complications">
+            </label>
+            <label>
+                Microvascular Complications
+                <input type="text" diagnosis-parameter="Macrovascular complications">
+            </label>`
+    },
+    {
+        matchable_string: "HF HFpEF HFrEF congestive cardiac heart cardiac failure",
         name: "Heart Failure",
         id: "diagnosis-ccf",
         html: `
@@ -1178,7 +1255,7 @@ let allDiagnoses = [
                     NYHA
                     <div class="selectbox">
                         <select diagnosis-parameter="NYHA">
-                            <option value="" selected disabled></option>
+                            <option value="" selected></option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -1187,26 +1264,562 @@ let allDiagnoses = [
                     </div>
                 </label>
                 <label>
-                    Stents in Place
-                    <input type="number" diagnosis-parameter="Stents">
+                    Aetiology
+                    <input type="text" diagnosis-parameter="Aetiology">
+                </label>
+            </div>
+            <label>
+                Echo Findings
+                <input type="text" diagnosis-parameter="Echo">
+            </label>`
+    },
+    {
+        matchable_string: "essential hypertension htn",
+        name: "Hypertension",
+        id: "diagnosis-hypertension",
+        html: `
+            <div class="hstack">
+                <label>
+                    Baseline BP
+                    <input type="text" diagnosis-parameter="Baseline BP">
+                </label>
+                <label>
+                    End Organ Damage
+                    <div class="selectbox">
+                        <select diagnosis-parameter="End-organ damage">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
                 </label>
             </div>`
     },
     {
-        matchable_string: "ischaemic heart disease NSTEMI myocardial infarction",
-        name: "Ischaemic Heart Disease",
-        id: "diagnosis-ihd",
+        matchable_string: "dyslipiaemia hyperlipidaemia hypercholesterolaemia",
+        name: "Dyslipidaemia",
+        id: "diagnosis-dyslipidaemia",
+        html: ``
+    },
+    {
+        matchable_string: "depression",
+        name: "Depression",
+        id: "diagnosis-depression",
+        html: ``
+    },
+    {
+        matchable_string: "social anxiety gad",
+        name: "Anxiety",
+        id: "diagnosis-anxiety",
+        html: ``
+    },
+    {
+        matchable_string: "RA rheumatoid arthritis",
+        name: "Rheumatoid Arthritis",
+        id: "diagnosis-rheumatoid-arthritis",
         html: `
             <div class="hstack">
                 <label>
-                    AMI in Last 6 Months
-                    <input type="text" diagnosis-parameter="Recent MI">
+                    C-Spine Involvement
+                    <div class="selectbox">
+                        <select diagnosis-parameter="C-Spine involvement">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
                 </label>
                 <label>
-                    Stents in Place
-                    <input type="number" diagnosis-parameter="Stents">
+                    Immune Suppressed
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Immune suppressed">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
                 </label>
             </div>`
+    },
+    {
+        matchable_string: "COPD COAD chronic obstructive pulmonary airways disease",
+        name: "COPD",
+        id: "diagnosis-copd",
+        html: `
+            <div class="hstack">
+                <label>
+                    GOLD Class
+                    <div class="selectbox">
+                        <select diagnosis-parameter="GOLD classification">
+                            <option value="" selected></option>
+                            <option value="1 (mild)">Mild (FEV1 ≥ 80% predicted)</option>
+                            <option value="2 (moderate)">Moderate (FEV1 50-79% predicted)</option>
+                            <option value="3 (severe)">Severe (FEV1 &lt; 49% predicted)</option>
+                            <option value="4 (very severe)">Very severe (FEV1 &lt; 30% predicted)</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Smoking
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Smoking" clinic-sync="smoking" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="active smoker">Active smoker</option>
+                            <option value="ex-smoker">Ex-smoker</option>
+                            <option value="never smoked">Never smoked</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    pHTN or RV Failure
+                    <div class="selectbox">
+                        <select diagnosis-parameter="PHTN/RV failure" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    <span>CO<sub>2</sub> Retainer</span>
+                    <div class="selectbox">
+                        <select diagnosis-parameter="CO2 retainer" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <label>
+                Recent Exacerbations
+                <input type="text" diagnosis-parameter="Recent exacerbations">
+            </label>
+            `
+    },
+    {
+        matchable_string: "asthma",
+        name: "Asthma",
+        id: "diagnosis-asthma",
+        html: `
+            <span>In the past <b>four weeks</b>, has the patient had:</span>
+            <div class="hstack">
+                <label>
+                    Day Symptoms
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Daytime Symptoms">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Night Symptoms
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Daytime Symptoms">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Used SABA ≥ 2x Per Week
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Heavy reliever use">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Activity Limitation
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Activity limitation">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "AS aortic stenosis",
+        name: "Aortic Stenosis",
+        id: "diagnosis-aortic-stenosis",
+        html: `
+            <div class="hstack">
+                <label>
+                    Last Echo
+                    <input type="text" diagnosis-parameter="Echo" placeholder="Date and provider">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    <span>Valve Area (cm<sup>2</sup>)</span>
+                    <input type="number" step="0.01" min="0" max="10" diagnosis-parameter="Area">
+                </label>
+                <label>
+                    Peak Gradient (mmHg)
+                    <input type="number" min="0" max="100"  diagnosis-parameter="Peak gradient">
+                </label>
+            </div>
+            <label>
+                Symptom burden
+                <input type="text" diagnosis-parameter="Symptoms">
+            </label>`
+    },
+    {
+        matchable_string: "AF atrial fibrillation",
+        name: "Atrial Fibrillation",
+        id: "diagnosis-atrial-fibrillation",
+        html: `
+            <div class="hstack">
+                <label>
+                    <span>CHA<sub>2</sub>DS<sub>2</sub>-VASc</span>
+                    <input type="number" step="1" min="0" max="8" diagnosis-parameter="CHADS-VASc">
+                </label>
+                <label>
+                    Anticoaglated
+                    <div class="selectbox">
+                        <select diagnosis-parameter="" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Rate Control
+                    <input type="text" step="1" min="0" max="8" diagnosis-parameter="Rate control">
+                </label>
+                <label>
+                    Rhythm Control
+                    <input type="text" step="1" min="0" max="8" diagnosis-parameter="Rhythm control">
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "hypothyroidism low T4",
+        name: "Hypothyroidism",
+        id: "diagnosis-hypothyroidism",
+        html: ``
+    },
+    {
+        matchable_string: "IHD ischaemic heart disease NSTEMI",
+        name: "Ischaemic Heart Disease",
+        id: "diagnosis-ihd",
+        html: ``
+    },
+    {
+        matchable_string: "chronic pain CRPS",
+        name: "Chronic Pain",
+        id: "diagnosis-chronic-pain",
+        html: `
+            <div class="hstack">
+                <label>
+                    Opioid Dependent
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Opioid dependent" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    CRPS Features
+                    <div class="selectbox">
+                        <select diagnosis-parameter="CRPS features" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Pain Specialist
+                    <input type="text" diagnosis-parameter="Treating specialist">
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "stroke TIA CVA",
+        name: "Cerebrovascular Accident",
+        id: "diagnosis-cva",
+        html: `
+            <div class="hstack">
+                <label>
+                    Details of Infarct
+                    <input type="text" diagnosis-parameter="Infarct details">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Motor Weakness
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Residual motor weakness" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Pharyngeal Symptoms
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Residual pharyngeal symptoms" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "epilepsy seizure",
+        name: "Seizure Disorder",
+        id: "diagnosis-seizures",
+        html: `
+            <label>
+                Triggers
+                <input type="text" diagnosis-parameter="Triggers">
+            </label>
+            <label>
+                Seizure Frequency
+                <input type="text" diagnosis-parameter="Frequency">
+            </label>
+            <div class="hstack">
+                <label>
+                    AED Compliant
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Compliant with AEDs" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Previous Status Epilepticus
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Previous status epilepticus" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "ckd chronic kidney disease",
+        name: "Chronic Kidney Disease",
+        id: "diagnosis-ckd",
+        html: `
+            <div class="hstack">
+                <label>
+                    KDIGO Stage
+                    <div class="selectbox">
+                        <select diagnosis-parameter="KDIGO stage" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="1">1 (GFR ≥ 90)</option>
+                            <option value="2">2 (GFR 60–89)</option>
+                            <option value="3a">3a (GFR 45–59)</option>
+                            <option value="3b">3b (GFR 30–44)</option>
+                            <option value="4">4 (GFR 15–29)</option>
+                            <option value="5">5 (GFR ≤ 14 or on dialysis)</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Dialysis Dependent
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Dialysis-dependent" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <label>
+                Aetiology
+                <input type="text" diagnosis-parameter="Aetiology">
+            </label>
+            <label>
+                Renal Physician
+                <input type="text" diagnosis-parameter="Renal physician">
+            </label>`
+    },
+    {
+        matchable_string: "iron deficiency anaemia",
+        name: "Iron Deficiency Anaemia",
+        id: "diagnosis-iron-deficiency-anaemia",
+        html: `
+            <label>
+                Aetiology
+                <input type="text" diagnosis-parameter="Aetiology">
+            </label>
+            <label>
+                Treatment
+                <input type="text" diagnosis-parameter="Treatment">
+            </label>`
+    },
+    {
+        matchable_string: "OA osteoarthritis",
+        name: "Osteoarthritis",
+        id: "diagnosis-osteoarthritis",
+        html: `
+            <label>
+                Affected Joints
+                <input type="text" diagnosis-parameter="Affected joints">
+            </label>
+            <div class="hstack">
+                <label>
+                    Opioid Dependent
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Opioid dependent" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "human immunodeficiency virus",
+        name: "HIV",
+        id: "diagnosis-hiv",
+        html: `
+            <div class="hstack">
+                <label>
+                    CD4 Count
+                    <input type="text" diagnosis-parameter="CD4 count">
+                </label>
+                <label>
+                    Viral Load
+                    <input type="text" diagnosis-parameter="Viral load">
+                </label>
+            </div>
+            <label>
+                Infectious Complications
+                <input type="text" diagnosis-parameter="Viral load">
+            </label>
+            <label>
+                Antiviral Regimen
+                <input type="text" diagnosis-parameter="Antiviral regimen">
+            </label>`
+    },
+    {
+        matchable_string: "child pugh liver cirrhosis",
+        name: "Liver Cirrhosis",
+        id: "diagnosis-cirrhosis",
+        html: `
+            <div class="hstack">
+                <label>
+                    Child-Pugh Class
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Child-Pugh" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="A (100% one-year survival)">A (100% one-year survival)</option>
+                            <option value="B (80% one-year survival)">B (80% one-year survival)</option>
+                            <option value="C (45% one-year survival)">C (45% one-year survival)</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    MELD Score
+                    <input type="number" min="0" max="100" step="1" diagnosis-parameter="MELD">
+                </label>
+            </div>
+            <div class="hstack">        
+                <label>
+                    Synthetic Function
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Synthetic function" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="intact">Intact</option>
+                            <option value="IMPAIRED">Impaired</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Baseline INR
+                    <input type="number" min="0" max="5" step="0.1" diagnosis-parameter="MELD">
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "obstructive sleep apnoea",
+        name: "Obstructive Sleep Apnoea",
+        id: "diagnosis-osa",
+        html: `
+            <div class="hstack">
+                <label>
+                    AHI
+                    <input type="number" min="0" max="300" step="1" diagnosis-parameter="AHI">
+                </label>
+                <label>
+                    CPAP User
+                    <div class="selectbox">
+                        <select diagnosis-parameter="CPAP" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "alzheimer's dementia",
+        name: "Alzheimer's Dementia",
+        id: "diagnosis-alzheimers",
+        html: `
+            <div class="hstack">
+                <label>
+                    Baseline MoCA/MMSE
+                    <input type="number" min="0" max="30" step="1" diagnosis-parameter="Baseline MoCA/MMSE">
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "steatohepatitis nonoalcoholic fatty liver disease",
+        name: "Steatohepatitis",
+        id: "diagnosis-steatohepatitis",
+        html: ``
+    },
+    {
+        matchable_string: "peptic gastric ulcers disease",
+        name: "Peptic Ulcer Disease",
+        id: "diagnosis-pud",
+        html: ``
+    },
+    {
+        matchable_string: "cataracts",
+        name: "Cataracts",
+        id: "diagnosis-cataracts",
+        html: ``
+    },
+    {
+        matchable_string: "glaucoma",
+        name: "Glaucoma",
+        id: "diagnosis-glaucoma",
+        html: ``
     },
 ]
 
@@ -1236,7 +1849,8 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
             <div class="clinic-diagnosis-body vstack">
                 ${this.data['html'] || ''}
                 <label>
-                    <textarea type="text" class="bigbox short" placeholder="Details" diagnosis-parameter="other-details"></textarea>
+                    Details
+                    <textarea type="text" class="bigbox short" diagnosis-parameter="other-details"></textarea>
                 </label>
             </div>
             <div class="clinic-diagnosis-bottom">
@@ -1273,12 +1887,16 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
         // add regular details
         for (let d in data) {
             if (d == 'other-details') continue
-            output = output + `\n--> ${d}: ${data[d]}`
+            output = output + `\n    - ${d}: ${data[d]}`
         }
 
         // add in other details
         if (data['other-details']) {
-            output += `\n${data['other-details']}`
+            let otherDetails = data['other-details']
+                .split('\n')
+                .map((l) => '    ' + l)
+                .join('\n')
+            output += `\n${otherDetails}`
         }
 
         return output
@@ -1299,7 +1917,24 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
         let answer = confirm(`Delete "${this.serialise()['name']}"?`)
         if (answer) {
             delete persistentDataProxy[this.getAttribute('clinic-parameter')]
+
+            let nextDiagnosis = this?.nextElementSibling
+            let prevDiagnosis = this?.previousElementSibling
             this.remove()
+            
+            // Plan A: focus next sibling
+            if (nextDiagnosis?.matches('clinic-diagnosis')) {
+                setFocusedDiagnosis(nextDiagnosis)
+            }
+
+            // Plan B: focus previous sibling
+            if (prevDiagnosis?.matches('clinic-diagnosis')) {
+                setFocusedDiagnosis(prevDiagnosis)
+            }
+
+            // Plan C: focus search box
+            diagnosisSearchBox.focus()
+
         }
     }
 })
@@ -1318,9 +1953,16 @@ function setFocusedDiagnosis(target) {
     }
     if (target) {
         target.setAttribute('aria-selected', true)
+        if (!target.matches(':focus-within')) {
+            setTimeout(() => { target.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
+        }
     }
 }
 
+// diagnosisList.addEventListener('mousedown', (e) => {
+//     let targetDiagnosis = e.target.closest('clinic-diagnosis')
+//     setFocusedDiagnosis(targetDiagnosis)
+// })
 diagnosisList.addEventListener('focusin', (e) => {
     let targetDiagnosis = e.target.closest('clinic-diagnosis')
     setFocusedDiagnosis(targetDiagnosis)
@@ -1339,6 +1981,9 @@ diagnosisList.addEventListener('keydown', (e) => {
 // SEARCH RESULTS
 
 function insertSearchResult(target, data) {
+    // make id unique
+    data['id'] = data['id'] + `-${Math.floor(Math.random() * 1000000000)}`
+
     let newResult = document.createElement('li')
     newResult.innerHTML = `${data['name']}<button>Add to PMHx</button></li>`
     newResult.data = data
@@ -1359,10 +2004,10 @@ function insertSearchResult(target, data) {
 
 diagnosisSearchBox.addEventListener('input', (e) => {
     // Find matches with fuzzysort
-    let searchString = e.target.value
+    let searchString = e.target.value.trim()
     let results = fuzzysort.go(searchString, allDiagnoses, {
         threshold: 0,
-        limit: 3,
+        limit: 4,
         all: false,
         key: "matchable_string",
     })
@@ -1372,16 +2017,26 @@ diagnosisSearchBox.addEventListener('input', (e) => {
     
     // Post new results list
     for (let r of results) {
-        insertSearchResult(diagnosisSearchResultsList, r.obj)
+        // send a shallow copy of the object
+        // prevents ['id] from being mutated by insertSearchResults()
+        // as much as rust is a pain, at least passing references vs copies is obvious
+        insertSearchResult(diagnosisSearchResultsList, { ... r.obj})
     }
 
     // Post unedited query string as the last option
     if (searchString.length > 0) {
-        insertSearchResult(diagnosisSearchResultsList, { name: escapeHTML(searchString), id: `diagnosis-user-defined-${Math.floor(Math.random() * 1000000000)}` })
+        insertSearchResult(diagnosisSearchResultsList, { name: escapeHTML(searchString), id: `diagnosis-user-defined` })
     }
 
     // Mark first result as "selected"
     diagnosisSearchResultsList?.firstElementChild?.setAttribute('aria-selected', 'true')
+})
+
+diagnosisSearchBox.addEventListener('keydown', (e) => {
+    if (e.key == "Escape") {
+        e.target.value = ''
+        e.target.dispatchEvent(new Event('input'))
+    }
 })
 
 //    ____        _          ____               _     _                            
@@ -1432,7 +2087,8 @@ for (let p in persistentDataProxy) {
     
     if (p.startsWith('diagnosis-')) {
         // find HTML if there is any
-        let genericDiagnosisData = allDiagnoses.find((d) => d['id'] == storedData['id'])
+        // uses startsWith() because each ID is appended with a ten-digit random ID (e.g. `diagnosis-ccf-1234567890`)
+        let genericDiagnosisData = allDiagnoses.find((d) => storedData['id'].startsWith(d['id']) )
         storedData['html'] = genericDiagnosisData?.html || ''
         
         let newDiagnosisElement = constructClinicDiagnosis(storedData)

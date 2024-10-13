@@ -119,7 +119,7 @@
                             Sex
                             <div class="selectbox">
                                 <select id="anthropometry-sex" clinic-parameter="sex" clinic-search="Sex" autocomplete="off">
-                                    <option disabled selected value=""></option>
+                                    <option selected value=""></option>
                                     <option value="M">Male</option>
                                     <option value="F">Female</option>
                                 </select>
@@ -132,7 +132,7 @@
                             Mode
                             <div class="selectbox">
                                 <select id="mode" clinic-parameter="mode" clinic-sync="mode" clinic-search="Appointment Mode">
-                                    <option value="" disabled selected></option>
+                                    <option value="" selected></option>
                                     <option value="">Face-to-face</option>
                                     <option value="** TELEPHONE ASSESSMENT ONLY **">Telephone</option>
                                 </select>
@@ -159,7 +159,7 @@
                             <div class="vstack" id="diagnosis-search">
                                 <label>
                                     PMHx
-                                    <input type="text" placeholder="Enter a diagnosis" clinic-search="Past Medical History (PMHx)">
+                                    <input type="text" placeholder="Search for a condition" clinic-search="Past Medical History (PMHx)">
                                 </label>
                                 <div id="diagnosis-results">
                                     <ul class="pill-list">
@@ -169,6 +169,10 @@
                         </clinic-searchresults>
                         <div id="diagnosis-list" class="vstack label-ish">
                         </div>
+                        <div id="diagnosis-placeholder">
+                            <p>Enter conditions using the search bar.</p>
+                            <img src="/icons/gasper_thinking.png" alt="">
+                        </div>
                     </div>
                     <div class="vstack">
                         <label>
@@ -176,12 +180,12 @@
                             <div class="hstack">
                                 <div class="selectbox">
                                     <select clinic-parameter="recently-ill" clinic-search="Recent Illness" autocomplete="off">
-                                        <option value="" selected disabled></option>
+                                        <option value="" selected></option>
                                         <option value="no">No</option>
                                         <option value="YES">Yes</option>
                                     </select>
                                 </div>
-                                <!-- <clinic-radio clinic-parameter="recently-ill" clinic-search="Recent Illness">
+                                <!-- <clinic-radio clinic-parameter="recently-ill" clinic-search="Recent Illness" tabindex="0">
                                     <label>
                                         Yes
                                         <input type="radio" name="recently-ill" value="YES">
@@ -199,7 +203,7 @@
                             <div class="hstack">
                                 <div class="selectbox">
                                     <select clinic-parameter="gord" clinic-search="GORD">
-                                        <option value="" disabled selected></option>
+                                        <option value="" selected></option>
                                         <option value="none">No symptoms</option>
                                         <option value="yes, medicated">Yes, on medication</option>
                                         <option value="yes, NOT medicated">Yes, off medication</option>
@@ -213,7 +217,7 @@
                                 METs
                                 <div class="selectbox">
                                     <select clinic-parameter="mets" clinic-search="Metabolic Equivalents (METs)">
-                                        <option value="" disabled selected></option>
+                                        <option value="" selected></option>
                                         <option value="LESS than 4">&lt; 4</option>
                                         <option value="more than 4">≥ 4</option>
                                     </select>
@@ -223,7 +227,7 @@
                                 Can Lie Flat
                                 <div class="selectbox">
                                     <select clinic-parameter="flat" clinic-search="Able to Lay Flat">
-                                        <option value="" disabled selected></option>
+                                        <option value="" selected></option>
                                         <option value="NOT able to lie flat">No</option>
                                         <option value="Able to lie flat">Yes</option>
                                     </select>
@@ -239,8 +243,8 @@
                             Smoking
                             <div class="hstack">
                                 <div class="selectbox">
-                                    <select clinic-parameter="smoking" clinic-search="Smoking Status" autocomplete="off">
-                                        <option value="" selected disabled></option>
+                                    <select clinic-parameter="smoking" clinic-search="Smoking Status" clinic-sync="smoking" autocomplete="off">
+                                        <option value="" selected></option>
                                         <option value="active smoker">Active smoker</option>
                                         <option value="ex-smoker">Ex-smoker</option>
                                         <option value="never smoked">Never smoked</option>
@@ -357,7 +361,7 @@
                                     Mallampati
                                     <div class="selectbox">
                                         <select clinic-parameter="mallampati" clinic-search="Mallampati Score" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -379,7 +383,7 @@
                                     Cricothyroid
                                     <div class="selectbox">
                                         <select clinic-parameter="cricothyroid" clinic-search="Cricothyroid Membrane" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="easily palpable">Easily palpable</option>
                                             <option value="intermediate">Intermediate</option>
                                             <option value="difficult">Difficult to locate</option>
@@ -393,7 +397,7 @@
                                     Jaw Protrusion
                                     <div class="selectbox">
                                         <select clinic-parameter="jaw-protrusion" clinic-search="Jaw Protrusion" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="A">A</option>
                                             <option value="B">B</option>No
                                             <option value="C">C</option>
@@ -404,7 +408,7 @@
                                     Neck ROM
                                     <div class="selectbox">
                                         <select clinic-parameter="neckrom" clinic-search="Neck Range of Motion (ROM)" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="normal">Normal</option>
                                             <option value="mildly limited">Mildly limited</option>
                                             <option value="moderately limited">Moderately limited</option>
@@ -419,7 +423,7 @@
                                     Beard
                                     <div class="selectbox">
                                         <select clinic-parameter="beard" clinic-search="Beard" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="YES, will trim">Will trim</option>
                                             <option value="YES, won't trim">Won't trim</option>
                                             <option value="no">No</option>
@@ -430,7 +434,7 @@
                                     Vein Quality
                                     <div class="selectbox">
                                         <select clinic-parameter="veins" clinic-search="Vein Quality" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="good">Good</option>
                                             <option value="fair">Fair</option>
                                             <option value="poor">Poor</option>
@@ -493,7 +497,7 @@
                             </label>
                             <label>
                                 HbA1c
-                                <input type="number" min="4" max="20" step="0.1" clinic-parameter="hba1c" autocomplete="off" clinic-search="Glycosylated Haemoglobin (HbA1c)">
+                                <input type="number" min="4" max="20" step="0.1" clinic-parameter="hba1c" clinic-sync="hba1c" autocomplete="off" clinic-search="Glycosylated Haemoglobin (HbA1c)">
                             </label>
                         </div>
                         <div class="hstack">
@@ -529,7 +533,7 @@
                 <div class="hstack">
                     <div class="vstack label-ish">
                         Pro Forma
-                        <div id="consent" clinic-search="Consent">
+                        <div clinic-search="Consent">
                             <label><input type="checkbox" tabindex=0 clinic-parameter="consent-ga">General Anaesthesia</label>
                             <label><input type="checkbox" tabindex=0 clinic-parameter="consent-sedation">Sedation</label>
                             <label><input type="checkbox" tabindex=0 clinic-parameter="consent-regional">Regional</label>
@@ -610,7 +614,7 @@
                                 Group
                                 <div class="selectbox">
                                     <select id="sort-maingroup">
-                                        <option value="" selected disabled></option>
+                                        <option value="" selected></option>
                                         <option value="Abdomen (excluding urinary and reproductive organs)">Abdomen (excluding urinary and reproductive organs)</option>
                                         <option value="Bones, joints and connective tissue/tendon muscle">Bones, joints and connective tissue/tendon muscle</option>
                                         <option value="Breast">Breast</option>
@@ -634,7 +638,7 @@
                                 Sub-Group
                                 <div class="selectbox">
                                     <select id="sort-subgroup">
-                                        <option value="" selected disabled></option>
+                                        <option value="" selected></option>
                                     </select>
                                 </div>
                             </label>
@@ -642,7 +646,7 @@
                                 Operation
                                 <div class="selectbox">
                                     <select id="sort-operation" clinic-parameter="operation" required>
-                                        <option value="" selected disabled></option>
+                                        <option value="" selected></option>
                                     </select>
                                 </div>
                             </label>
@@ -652,7 +656,7 @@
                                     ASA-PS
                                     <div class="selectbox">
                                         <select clinic-parameter="asa" clinic-sync="asa" clinic-search="ASA-PS Score" autocomplete="off">
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -679,7 +683,7 @@
                                     Malignancy?
                                     <div class="selectbox">
                                         <select clinic-parameter="malignancy" required>
-                                            <option value="" disabled selected></option>
+                                            <option value="" selected></option>
                                             <option value="Yes">Yes</option>
                                             <option value="No">No</option>
                                         </select>
@@ -690,7 +694,7 @@
                                 Thoracics, GI, or vascular?
                                 <div class="selectbox">
                                     <select clinic-parameter="tgv" required>
-                                        <option value="" disabled selected></option>
+                                        <option value="" selected></option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
                                     </select>
