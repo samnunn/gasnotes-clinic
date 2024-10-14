@@ -586,6 +586,7 @@
                                     <label><input type="checkbox" tabindex=0 clinic-parameter="rcri-creatinine" autocomplete="off">Cr > 176.8 μmol/L</label>
                                     <p type="text" clinic-calculator-interpretation clinic-parameter="rcri-interpretation"></p>
                                 </div>
+                                <aside><small>* Peritoneal, thoracic, or supra-inguinal vascular surgery</small></aside>
                             </div>
                             <div class="label-ish" clinic-calculator clinic-interpreter="apfel">
                                 <span>Apfel (<span clinic-calculator-output clinic-parameter="apfel-score"></span>/4)</span>
@@ -597,19 +598,20 @@
                                     <p type="text" clinic-calculator-interpretation clinic-parameter="apfel-interpretation"></p>
                                 </div>
                             </div>
-                            <aside><small>* Peritoneal, thoracic, or supra-inguinal vascular surgery</small></aside>
                         </div>
                         <div class="vstack" id="sort-container">
-                            <form id="smart-search">
-                                <label>
-                                    SORT Search ✨
-                                    <div class="hstack">
-                                        <input type="search" name="embed" clinic-search="SORT Score Calculator">
-                                        <!-- <button>Search</button> -->
-                                    </div>
-                                </label>
-                            </form>
-                            <ul id="smart-results" class="pill-list"></ul>
+                            <clinic-searchresults class="vstack">
+                                <form id="smart-search">
+                                    <label>
+                                        SORT Search ✨
+                                        <div class="hstack">
+                                            <input type="search" name="embed" clinic-search="SORT Score Calculator">
+                                            <!-- <button>Search</button> -->
+                                        </div>
+                                    </label>
+                                </form>
+                                <ul id="smart-results" class="pill-list"></ul>
+                            </clinic-searchresults>
                             <label>
                                 Group
                                 <div class="selectbox">

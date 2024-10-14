@@ -172,6 +172,9 @@ section:focus-within {
 .quadruple {
     grid-column-end: span 4;
 }
+.quintuple {
+    grid-column-end: span 5;
+}
 
 /* TEXT INPUTS */
 .label-ish, label {
@@ -816,4 +819,13 @@ clinic-diagnosis {
             display: block;
         }
     }
+}
+
+clinic-searchresults {
+    transition: none;
+    * {
+        transition: none;
+    }
+}
+
 }

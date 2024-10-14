@@ -256,7 +256,7 @@ beagle.addEventListener('message', (m) => {
 let brightspot = new Worker('/brightspot.js')
 let searchForm = document.querySelector('#smart-search')
 let searchResults = document.querySelector('#smart-results')
-searchForm.addEventListener('submit', (e) => {
+searchForm.addEventListener('input', (e) => {
     e.preventDefault()
     let query = searchForm.querySelector('input[type="search"]')?.value
     if (!query) return
@@ -279,6 +279,8 @@ brightspot.addEventListener('message', (m) => {
         newHTML += `<li maingroup="${r.obj['MainGroup']}" subgroup="${r.obj['SubGroup']}"><span>${r.obj['SurgeryProcedure']}</span><button>Pick</button></li>\n`
     }
     searchResults.innerHTML = newHTML
+
+    searchResults.firstChild.setAttribute('aria-selected', 'true')
 })
 searchResults.addEventListener('mousedown', (e) => {
     e.preventDefault() // stop focus stealing
@@ -1248,7 +1250,7 @@ let allDiagnoses = [
             </label>`
     },
     {
-        matchable_string: "HF HFpEF HFrEF congestive cardiac heart cardiac failure",
+        matchable_string: "HF HFpEF HFrEF congestive cardiac heart failure",
         name: "Heart Failure",
         id: "diagnosis-ccf",
         html: `
@@ -1316,7 +1318,7 @@ let allDiagnoses = [
         html: ``
     },
     {
-        matchable_string: "RA rheumatoid arthritis",
+        matchable_string: "rheumatoid arthritis",
         name: "Rheumatoid Arthritis",
         id: "diagnosis-rheumatoid-arthritis",
         html: `
@@ -1344,7 +1346,7 @@ let allDiagnoses = [
             </div>`
     },
     {
-        matchable_string: "COPD COAD chronic obstructive pulmonary airways disease",
+        matchable_string: "chronic obstructive pulmonary airways disease",
         name: "COPD",
         id: "diagnosis-copd",
         html: `
