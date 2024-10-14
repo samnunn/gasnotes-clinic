@@ -364,8 +364,9 @@ let outputTemplates = {
 - GORD: {{gord}}
 --> {{gord-details}}
 - METs: {{mets}}
-- Supine: {{flat}}
-- Exercise: {{mets-details}}
+- Able to lay flat: {{flat}}
+- Exercise tolerance: {{mets-details}}
+- Clinical frailty score: {{rockwood-cfs}}
 
 # SHx
 - Smoking: {{smoking}}

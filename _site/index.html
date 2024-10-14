@@ -228,8 +228,8 @@
                                 <div class="selectbox">
                                     <select clinic-parameter="flat" clinic-search="Able to Lay Flat">
                                         <option value="" selected></option>
-                                        <option value="NOT able to lie flat">No</option>
-                                        <option value="Able to lie flat">Yes</option>
+                                        <option value="NO">No</option>
+                                        <option value="yes">Yes</option>
                                     </select>
                                 </div>
                             </label>
@@ -237,6 +237,23 @@
                         <label>
                             Exercise Tolerance
                             <input type="text" clinic-parameter="mets-details" clinic-search="Exercise Tolerance" placeholder="">
+                        </label>
+                        <label>
+                            Rockwood Clinical Frailty Score
+                            <div class="selectbox">
+                                <select clinic-parameter="rockwood-cfs" clinic-search="Rockwood Clinical Frailty Score" autocomplete="off">
+                                    <option value="" selected></option>
+                                    <option value="1">1 – Very Fit</option>
+                                    <option value="2">2 – Well</option>
+                                    <option value="3">3 – Managing Well</option>
+                                    <option value="4">4 – Vulnerable</option>
+                                    <option value="5">5 – Mildly Frail</option>
+                                    <option value="6">6 – Moderately Frail</option>
+                                    <option value="7">7 – Severely Frail</option>
+                                    <option value="8">8 – Very Severely Frail</option>
+                                    <option value="9">9 – Terminally Ill</option>
+                                </select>
+                            </div>
                         </label>
                         <hr>
                         <label>
@@ -708,6 +725,7 @@
                         
                     </div>
                 </div>
+                
             </section>
             <section class="island" id="plan">
                 <div class="section-topper">
