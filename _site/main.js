@@ -361,8 +361,6 @@ let outputTemplates = {
 # Systems Review
 - Recent illness: {{recently-ill}}
 --> {{recently-ill-details}}
-- GORD: {{gord}}
---> {{gord-details}}
 - METs: {{mets}}
 - Able to lay flat: {{flat}}
 - Exercise tolerance: {{mets-details}}
@@ -1357,10 +1355,10 @@ let allDiagnoses = [
                     <div class="selectbox">
                         <select diagnosis-parameter="GOLD classification">
                             <option value="" selected></option>
-                            <option value="1 (mild)">Mild (FEV1 ≥ 80% predicted)</option>
-                            <option value="2 (moderate)">Moderate (FEV1 50-79% predicted)</option>
-                            <option value="3 (severe)">Severe (FEV1 &lt; 49% predicted)</option>
-                            <option value="4 (very severe)">Very severe (FEV1 &lt; 30% predicted)</option>
+                            <option value="mild (FEV1 ≥ 80% predicted)">Mild – FEV1 ≥ 80% predicted</option>
+                            <option value="moderate (FEV1 50-79% predicted)">Moderate – FEV1 50-79% predicted</option>
+                            <option value="severe (FEV1 &lt; 49% predicted)">Severe – FEV1 &lt; 49% predicted</option>
+                            <option value="very severe (FEV1 &lt; 30% predicted)">Very severe – FEV1 &lt; 30% predicted</option>
                         </select>
                     </div>
                 </label>
