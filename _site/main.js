@@ -1194,7 +1194,7 @@ let allDiagnoses = [
                 <input type="text" diagnosis-parameter="Microvascular complications">
             </label>
             <label>
-                Microvascular Complications
+                Macrovascular Complications
                 <input type="text" diagnosis-parameter="Macrovascular complications">
             </label>`
     },
@@ -1388,9 +1388,9 @@ let allDiagnoses = [
                     </div>
                 </label>
                 <label>
-                    <span>CO<sub>2</sub> Retainer</span>
+                    <span>Home <span>O<sub>2</sub></span>
                     <div class="selectbox">
-                        <select diagnosis-parameter="CO2 retainer" autocomplete="off">
+                        <select diagnosis-parameter="Home O2" autocomplete="off">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1409,12 +1409,35 @@ let allDiagnoses = [
         name: "Asthma",
         id: "diagnosis-asthma",
         html: `
+            <div class="hstack">
+                <label>
+                    NSAID Reactive
+                    <div class="selectbox">
+                        <select diagnosis-parameter="NSAID reactive">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Hospital/ICU Admissions
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Hospital/ICU admissions">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <hr>
             <span>In the past <b>four weeks</b>, has the patient had:</span>
             <div class="hstack">
                 <label>
                     Day Symptoms
                     <div class="selectbox">
-                        <select diagnosis-parameter="Daytime Symptoms">
+                        <select diagnosis-parameter="Daytime symptoms">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1424,7 +1447,7 @@ let allDiagnoses = [
                 <label>
                     Night Symptoms
                     <div class="selectbox">
-                        <select diagnosis-parameter="Daytime Symptoms">
+                        <select diagnosis-parameter="Night symptoms">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1434,7 +1457,7 @@ let allDiagnoses = [
             </div>
             <div class="hstack">
                 <label>
-                    Used SABA ≥ 2x Per Week
+                    Used SABA ≥ 2x Weekly
                     <div class="selectbox">
                         <select diagnosis-parameter="Heavy reliever use">
                             <option value="" selected></option>
@@ -1453,7 +1476,8 @@ let allDiagnoses = [
                         </select>
                     </div>
                 </label>
-            </div>`
+            </div>
+            <hr>`
     },
     {
         matchable_string: "AS aortic stenosis",
@@ -1488,13 +1512,37 @@ let allDiagnoses = [
         html: `
             <div class="hstack">
                 <label>
+                    Type
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Type" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="paroxysmal">Paroxysmal (≥ 7 days)</option>
+                            <option value="persistent">Persistent (≥ 7 days)</option>
+                            <option value="longstanding">Longstanding (≥ 1 year)</option>
+                            <option value="permanent">Permanent (cardioversion-resistant)</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
                     <span>CHA<sub>2</sub>DS<sub>2</sub>-VASc</span>
                     <input type="number" step="1" min="0" max="8" diagnosis-parameter="CHADS-VASc">
                 </label>
+            </div>
+            <div class="hstack">
                 <label>
-                    Anticoaglated
+                    Anticoagulated
                     <div class="selectbox">
-                        <select diagnosis-parameter="" autocomplete="off">
+                        <select diagnosis-parameter="Anticoagulated" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Structural Disease
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Structural disease" autocomplete="off">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1520,10 +1568,40 @@ let allDiagnoses = [
         html: ``
     },
     {
-        matchable_string: "IHD ischaemic heart disease NSTEMI",
+        matchable_string: "ischaemic heart disease NSTEMI",
         name: "Ischaemic Heart Disease",
         id: "diagnosis-ihd",
-        html: ``
+        html: `
+            <div class="hstack">
+                <label>
+                    Stable Disease
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Stable disease" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Antiplatets
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Antiplatelets" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="single">Single</option>
+                            <option value="dual">Dual</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <label>
+                Management
+                <input type="text" diagnosis-parameter="Management">
+            </label>
+            <label>
+                Treating Cardiologist
+                <input type="text" diagnosis-parameter="Treating cardiologist">
+            </label>`
     },
     {
         matchable_string: "chronic pain CRPS",
@@ -1532,9 +1610,9 @@ let allDiagnoses = [
         html: `
             <div class="hstack">
                 <label>
-                    Opioid Dependent
+                    Opioid Tolerance
                     <div class="selectbox">
-                        <select diagnosis-parameter="Opioid dependent" autocomplete="off">
+                        <select diagnosis-parameter="Opioid tolerance" autocomplete="off">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
@@ -1650,6 +1728,12 @@ let allDiagnoses = [
                     </div>
                 </label>
                 <label>
+                    Aetiology
+                    <input type="text" diagnosis-parameter="Aetiology">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
                     Dialysis Dependent
                     <div class="selectbox">
                         <select diagnosis-parameter="Dialysis-dependent" autocomplete="off">
@@ -1659,11 +1743,11 @@ let allDiagnoses = [
                         </select>
                     </div>
                 </label>
+                <label>
+                     
+                    <input type="text" diagnosis-parameter="Dialysis details" placeholder="Details">
+                </label>
             </div>
-            <label>
-                Aetiology
-                <input type="text" diagnosis-parameter="Aetiology">
-            </label>
             <label>
                 Renal Physician
                 <input type="text" diagnosis-parameter="Renal physician">
@@ -1751,20 +1835,28 @@ let allDiagnoses = [
                     <input type="number" min="0" max="100" step="1" diagnosis-parameter="MELD">
                 </label>
             </div>
-            <div class="hstack">        
+            <div class="hstack">
                 <label>
-                    Synthetic Function
+                    Varices
                     <div class="selectbox">
-                        <select diagnosis-parameter="Synthetic function" autocomplete="off">
+                        <select diagnosis-parameter="Varices" autocomplete="off">
                             <option value="" selected></option>
-                            <option value="intact">Intact</option>
-                            <option value="IMPAIRED">Impaired</option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
                         </select>
                     </div>
                 </label>
                 <label>
-                    Baseline INR
-                    <input type="number" min="0" max="5" step="0.1" diagnosis-parameter="MELD">
+                    Disposition
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Treatment disposition/direction" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="transplant">Transplant</option>
+                            <option value="TIPS">TIPS</option>
+                            <option value="conservative">Conservative</option>
+                            <option value="palliation">Palliation</option>
+                        </select>
+                    </div>
                 </label>
             </div>`
     },
@@ -1800,6 +1892,16 @@ let allDiagnoses = [
                     Baseline MoCA/MMSE
                     <input type="number" min="0" max="30" step="1" diagnosis-parameter="Baseline MoCA/MMSE">
                 </label>
+                <label>
+                    Can Lay Still
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Can lay still" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
             </div>`
     },
     {
@@ -1825,6 +1927,132 @@ let allDiagnoses = [
         name: "Glaucoma",
         id: "diagnosis-glaucoma",
         html: ``
+    },
+    {
+        matchable_string: "gastro-oesophageal reflux disease",
+        name: "GORD",
+        id: "diagnosis-gord",
+        html: `
+            <div class="hstack">
+                <label>
+                    Medicated
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Medicated">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Ongoing Symptoms
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Ongoing symptoms">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "anaphylaxis",
+        name: "Anaphylaxis",
+        id: "diagnosis-anaphylaxis",
+        html: `
+            <div class="hstack">
+                <label>
+                    Carries Adrenaline
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Carries adrenaline injector">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Anaesthesia Related
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Anaesthesia-related">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>
+            <label>
+                Triggers
+                <input type="text" diagnosis-parameter="Triggers">
+            </label>`
+    },
+    {
+        matchable_string: "permanent pacemaker",
+        name: "Pacemaker",
+        id: "diagnosis-pacemaker",
+        html: `
+            <div class="hstack">
+                <label>
+                    Indication
+                    <input type="text" diagnosis-parameter="Indication">
+                </label>
+                <label>
+                    Last Checked
+                    <input type="text" diagnosis-parameter="Last checked">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Mode
+                    <input type="text" diagnosis-parameter="Mode">
+                </label>
+                <label>
+                    Manufacturer
+                    <input type="text" diagnosis-parameter="Manufacturer">
+                </label>
+            </div>
+            <label>
+                Pacing Dependence
+                <input type="text" diagnosis-parameter="Pacing dependence">
+            </label>`
+    },
+    {
+        matchable_string: "internal cardiac defibrillator",
+        name: "ICD",
+        id: "diagnosis-icd",
+        html: `
+            <div class="hstack">
+                <label>
+                    Indication
+                    <input type="text" diagnosis-parameter="Indication">
+                </label>
+                <label>
+                    Last Checked
+                    <input type="text" diagnosis-parameter="Last checked">
+                </label>
+            </div>
+            <div class="hstack">
+                <label>
+                    Diathermy in Use
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Diathermy in use" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+                <label>
+                    Manufacturer
+                    <input type="text" diagnosis-parameter="Manufacturer">
+                </label>
+            </div>
+            <label>
+                Trigger Frequency
+                <input type="text" diagnosis-parameter="Trigger frequency">
+            </label>`
     },
 ]
 
@@ -1946,14 +2174,50 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
             // Plan C: focus search box
             diagnosisSearchBox.focus()
 
+            // delete from persistentDataProxy (which will trigger Beagle to re-evaulate too)
+            delete persistentDataProxy[this.data.id]
         }
     }
 })
 
-function constructClinicDiagnosis(data) {
-    let newElement = document.createElement('clinic-diagnosis')
-    newElement.data = data
-    return newElement
+function insertClinicDiagnosis(data, target, position, focus=true) {
+    // Create element
+    let newDiagnosisElement = document.createElement('clinic-diagnosis')
+
+    // Add data
+    newDiagnosisElement.data = data
+
+    // Create new diagnosis markup with data from target <li>
+    target.insertAdjacentElement(position, newDiagnosisElement)
+
+    // Populate synced values
+    // TODO: just do this from dataProxy, not DOM
+    let syncedInputs = newDiagnosisElement.querySelectorAll('[clinic-sync]')
+    for (let i of syncedInputs) {
+        let parameterName = i.getAttribute('clinic-sync')
+
+        let syncTargets = document.querySelectorAll(`[clinic-sync="${parameterName}"]`)
+        if (!syncTargets) continue
+        
+        let syncValue
+        for (let t of syncTargets) {
+            if (t == newDiagnosisElement) continue
+            syncValue = getAnyInputValue(t)
+            if (syncValue) break
+        }
+
+        if (!syncValue) continue
+        setAnyInputValue(i, syncValue)
+    }
+
+    if (focus) {
+        // Open it and set focus on the first non-title input element (be it a textarea or an input)
+        setFocusedDiagnosis(newDiagnosisElement)
+        setTimeout(() => { newDiagnosisElement.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
+    }
+
+
+    return newDiagnosisElement
 }
 
 // Handle expansion/shrinking of each diagnosis
@@ -1993,20 +2257,21 @@ diagnosisList.addEventListener('keydown', (e) => {
 
 function insertSearchResult(target, data) {
     // make id unique
-    data['id'] = data['id'] + `-${Math.floor(Math.random() * 1000000000)}`
+    data['id'] = data['id']
 
     let newResult = document.createElement('li')
     newResult.innerHTML = `${data['name']}<button>Add to PMHx</button></li>`
     newResult.data = data
     newResult.onclick = (e) => {
-        // Create new diagnosis markup with data from target <li>
-        let newDiagnosisElement = constructClinicDiagnosis(data)
-        diagnosisList.insertAdjacentElement("afterbegin", newDiagnosisElement)
-
-        // Open it and set focus on the first non-title input element (be it a textarea or an input)
-        setFocusedDiagnosis(newDiagnosisElement)
-        setTimeout(() => { newDiagnosisElement.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
-
+        // insert new diagnosis
+        // or focus existing version
+        let existingDiagnosis = document.querySelector(`[clinic-parameter="${data['id']}"]`)
+        if (existingDiagnosis) {
+            setFocusedDiagnosis(existingDiagnosis)
+        } else {
+            insertClinicDiagnosis(data, diagnosisList, "afterbegin", true)
+        }
+        // clear search
         diagnosisSearchBox.value = ''
         diagnosisSearchBox.dispatchEvent(new Event('input'))
     }
@@ -2036,7 +2301,7 @@ diagnosisSearchBox.addEventListener('input', (e) => {
 
     // Post unedited query string as the last option
     if (searchString.length > 0) {
-        insertSearchResult(diagnosisSearchResultsList, { name: escapeHTML(searchString), id: `diagnosis-user-defined` })
+        insertSearchResult(diagnosisSearchResultsList, { name: escapeHTML(searchString), id: `diagnosis-user-defined-${Math.floor(Math.random() * 1000000000)}` })
     }
 
     // Mark first result as "selected"
@@ -2081,29 +2346,35 @@ let persistentDataProxy = new Proxy(persistentDataStore, {
         localStorage.setItem('clinic-data', JSON.stringify(object))
 
         // Send to beagle for sniffing
-        beagle.postMessage({
-            inputData: object,
-        })
+        sendToBeagle(object)
     },
     deleteProperty(object, key) {
         delete object[key]
         localStorage.setItem('clinic-data', JSON.stringify(object))
+
+        // Send to beagle for sniffing
+        sendToBeagle(object)
+
         return true
     }
 })
+
+function sendToBeagle(inputData) {
+    beagle.postMessage({
+        inputData: inputData,
+    })
+}
 
 // display persisted data on load
 for (let p in persistentDataProxy) {
     let storedData = persistentDataProxy[p]
     
     if (p.startsWith('diagnosis-')) {
-        // find HTML if there is any
-        // uses startsWith() because each ID is appended with a ten-digit random ID (e.g. `diagnosis-ccf-1234567890`)
-        let genericDiagnosisData = allDiagnoses.find((d) => storedData['id'].startsWith(d['id']) )
+        // find HTML if there is any pre-made markup to add
+        let genericDiagnosisData = allDiagnoses.find((d) => d['id'] == storedData['id'] )
         storedData['html'] = genericDiagnosisData?.html || ''
         
-        let newDiagnosisElement = constructClinicDiagnosis(storedData)
-        diagnosisList.insertAdjacentElement("afterbegin", newDiagnosisElement)
+        insertClinicDiagnosis(storedData, diagnosisList, "afterbegin", false)
 
         continue
     }
@@ -2120,7 +2391,7 @@ beagle.postMessage({
 })
 
 // listen for input events on any element with clinic-parameter
-document.addEventListener('input', (e) => {
+document.body.addEventListener('input', (e) => {
     if (e.target.hasAttribute('clinic-parameter')) {
         persistentDataProxy[e.target.getAttribute('clinic-parameter')] = getAnyInputValue(e.target)
     }

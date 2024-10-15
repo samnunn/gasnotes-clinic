@@ -91,6 +91,10 @@ function runRule(rule, inputData) {
     return false
 }
 
+function diagnosisExists(inputData, diagnosis) {
+    return Object.keys(inputData).some( (k) => k.includes(diagnosis))
+}
+
 class Bone {
     constructor(name, citation, matchStrategy, matchRules, defaultSuggestions, conditionalSuggestions, severityGrades) {
         this.name = name
@@ -238,17 +242,45 @@ let boneData = [
         ],
     },
     {
-        name: "Diabetes",
+        name: "T2DM",
         citation: "",
         matchStrategy: "any",
         matchRules: [
-            (inputData) => /t1dm|t2dm|iddm|diabet/i.test(inputData['pmhx']),
-            (inputData) => /sulin|metf|iclaz|glipin|glargine|janu|floz|xig|jardia/i.test(inputData['rx']),
-            (inputData) => inputData['rcri-insulin'] == true,
+            (inputData) => diagnosisExists(inputData, 'diagnosis-t2dm'),
+            // (inputData) => /sulin|metf|iclaz|glipin|glargine|janu|floz|xig|jardia/i.test(inputData['rx']),
+            // (inputData) => inputData['rcri-insulin'] == true,
         ],
         defaultSuggestions: [
             // "Default suggestion for diabetic patients",
             "BSL on arrival",
+        ],
+        conditionalSuggestions: [
+            {
+                matchStrategy: "any",
+                matchRules: [
+                    (inputData) => parseFloat(inputData['hba1c']) >= 9.1,
+                ],
+                suggestions: [
+                    "Endocrinology referral for pre-operative optimisation",
+                ],
+            },
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "T1DM",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-t1dm'),
+            // (inputData) => Object.keys(inputData).some( (k) => k.includes('diagnosis-t1dm') ),
+            // (inputData) => /sulin|metf|iclaz|glipin|glargine|janu|floz|xig|jardia/i.test(inputData['rx']),
+            // (inputData) => inputData['rcri-insulin'] == true,
+        ],
+        defaultSuggestions: [
+            // "Default suggestion for diabetic patients",
+            "BSL and ketones on arrival",
         ],
         conditionalSuggestions: [
             {
@@ -316,6 +348,7 @@ let boneData = [
         citation: "",
         matchStrategy: "any",
         matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-anaphylaxis'),
             (inputData) => /anaph|(?<!pro.+)ylaxis|(?<!pro.+)ylact/i.test([inputData['pmhx'], inputData['rx'], inputData['allergies']].join(' ')),
         ],
         defaultSuggestions: [
@@ -358,9 +391,9 @@ let boneData = [
         citation: "",
         matchStrategy: "any",
         matchRules: [
-            (inputData) => /G[OE]RD/i.test(inputData['pmhx']),
+            (inputData) => diagnosisExists(inputData, 'diagnosis-gord'),
             (inputData) => /yes/i.test(inputData['gord']),
-            (inputData) => /prazol|somac|nexim|pariet|esopre/i.test(inputData['rx']),
+            (inputData) => /prazol|somac|nexium|pariet|esopre|sozol/i.test(inputData['rx']),
         ],
         defaultSuggestions: [
         ],
@@ -370,20 +403,38 @@ let boneData = [
         ],
     },
     {
-        name: "OSA",
+        name: "Diagnosed OSA",
         citation: "",
         matchStrategy: "any",
         matchRules: [
-            (inputData) => /OSA|apnoea/i.test(inputData['pmhx']),
-            (inputData) => parseInt(inputData['stopbang-score']) >= 5,
+            (inputData) => diagnosisExists(inputData, 'diagnosis-osa'),
+        ],
+        defaultSuggestions: [
+        ],
+        conditionalSuggestions: [
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "OSA Risk Factors",
+        citation: "",
+        matchStrategy: "all",
+        matchRules: [
+            // do *not* match when OSA has already been diagnosed
+            (inputData) => !diagnosisExists(inputData, 'diagnosis-osa'),
             (inputData) => {
+                // Rule 1: score ≥ 5
+                if (parseInt(inputData['stopbang-score']) >= 5) return true
+
+                // Rule 2: any of the BNG criteria + ≥ 2 of the STOP criteria
                 let stopCriteria = [inputData['snorer'], inputData['daytime-tiredness'], inputData['observed-apnoea'], inputData['hypertensive']]
                 let highRiskCriteria = [inputData['stopbang-bmi-35'], inputData['stopbang-neck'], inputData['stopbang-sex']] // BANG criteria minus age
                 stopCriteria = stopCriteria.filter((v) => v == true)
                 highRiskCriteria = highRiskCriteria.filter((v) => v == true)
-
                 if (stopCriteria.length >= 2 && highRiskCriteria.length >= 1) return true
                 
+                // otherwise return false
                 return false
             },
         ],
@@ -395,10 +446,11 @@ let boneData = [
         ],
     },
     {
-        name: "Abnormal renal function",
+        name: "Impaired renal function",
         citation: "",
         matchStrategy: "any",
         matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-ckd'),
             (inputData) => /\d{3}/i.test(inputData['uec']),
             (inputData) => inputData['rcri-creatinine'] == true,
         ],
@@ -430,6 +482,7 @@ let boneData = [
         citation: "",
         matchStrategy: "any",
         matchRules: [
+            (inputData) => /y/i.test(inputData['diagnosis-atrial-fibrillation']['Anticoagulated']),
             (inputData) => /xab|atran|warf|couma|eliq|xera|pradax/i.test(inputData['rx']),
         ],
         defaultSuggestions: [
@@ -473,6 +526,22 @@ let boneData = [
         matchStrategy: "any",
         matchRules: [
             (inputData) => /morph|trama|tapen|lexi|bupr|adone|targin|oxyc/i.test(inputData['rx']),
+            (inputData) => /y/i.test(inputData['diagnosis-chronic-pain']['Opioid tolerance']),
+        ],
+        defaultSuggestions: [
+        ],
+        conditionalSuggestions: [
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "Chronic pain",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => /morph|trama|tapen|lexi|bupr|adone|targin|oxyc/i.test(inputData['rx']),
+            (inputData) => diagnosisExists(inputData, 'diagnosis-chronic-pain'),
         ],
         defaultSuggestions: [
         ],
@@ -486,8 +555,8 @@ let boneData = [
         citation: "",
         matchStrategy: "any",
         matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-ihd'),
             (inputData) => inputData['rcri-ihd'] == true,
-            (inputData) => /IHD|STEMI|heart attack/i.test(inputData['pmhx']),
         ],
         defaultSuggestions: [
         ],
@@ -501,7 +570,8 @@ let boneData = [
         citation: "",
         matchStrategy: "any",
         matchRules: [
-            (inputData) => /hf|hfref|hfpef|heart failure|ccf|chf/i.test(inputData['pmhx']),
+            // (inputData) => /hf|hfref|hfpef|heart failure|ccf|chf/i.test(inputData['pmhx']),
+            (inputData) => diagnosisExists(inputData, 'diagnosis-ccf'),
         ],
         defaultSuggestions: [
         ],
@@ -524,9 +594,67 @@ let boneData = [
         severityGrades: [
         ],
     },
+    {
+        name: "NSAID-Reactive Asthma",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => /y/i.test(inputData['diagnosis-asthma']['NSAID reactive']),
+        ],
+        defaultSuggestions: [
+            "Avoid NSAIDs",
+        ],
+        conditionalSuggestions: [
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "Poor Asthma Control",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => {
+                if (/y/i.test(inputData['diagnosis-asthma']['Daytime symptoms'])) return true
+                if (/y/i.test(inputData['diagnosis-asthma']['Night symptoms'])) return true
+                if (/y/i.test(inputData['diagnosis-asthma']['Heavy reliever use'])) return true
+                if (/y/i.test(inputData['diagnosis-asthma']['Activity limitation'])) return true
+                return false
+            },
+        ],
+        defaultSuggestions: [
+        ],
+        conditionalSuggestions: [
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "ICD in situ",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-icd'),
+        ],
+        defaultSuggestions: [
+        ],
+        conditionalSuggestions: [
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        name: "Pacemaker in situ",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-pacemaker'),
+        ],
+    },
 ]
 
 let bones = []
 for (b of boneData) {
-    bones.push(new Bone(b.name, b.citation, b.matchStrategy, b.matchRules, b.defaultSuggestions, b.conditionalSuggestions, b.severityGrades))
+    // provide default empty array from non-essential items
+    bones.push(new Bone(b.name, b.citation, b.matchStrategy, b.matchRules, b.defaultSuggestions || [], b.conditionalSuggestions || [], b.severityGrades || []))
 }

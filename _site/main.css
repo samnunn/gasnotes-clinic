@@ -80,7 +80,7 @@ hr {
         margin: 1rem 0 0 0;
     }
     img {
-        width: 40%;
+        width: calc(4*22px);
     }
 
 }
@@ -826,6 +826,4 @@ clinic-searchresults {
     * {
         transition: none;
     }
-}
-
 }
