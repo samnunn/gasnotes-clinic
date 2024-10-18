@@ -1,4 +1,4 @@
-let version = "15"
+let version = "16"
 
 let cacheName = `v${version}_data`
 
@@ -17,6 +17,8 @@ let cachedAssetPaths = [
     'oplist.json',
     // IMAGES
     'icons/gasper.png',
+    'icons/gasper_nobellows.png',
+    'icons/gasper_justbellows.png',
     'icons/gasper_favicon.png',
     'icons/gasper_thinking.png',
     'icons/chevron_down.svg',

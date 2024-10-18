@@ -48,8 +48,27 @@ hr {
     color: black;
 }
 
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+@keyframes bellowsBounce {
+    0% {
+        transform: translateY(0%);
+    }
+    25% {
+        transform: translateY(12.9%);
+    }
+    50% {
+        transform: translateY(0%);
+    }
+}
+
 /* TITLE */
 #site-title {
+    position: relative;
     transition: none;
     /* background-color: var(--colour-blue); */
     border-radius: 0.5rem;
@@ -73,6 +92,7 @@ hr {
         margin: 0;
         font-size: 1rem;
     } */
+
     p {
         font-family: var(--font-nerdy);
         font-size: 0.8rem;
@@ -81,8 +101,16 @@ hr {
     }
     img {
         width: calc(4*22px);
+        z-index: 2;
     }
-
+    img#bellows {
+        z-index: 1;
+        position: absolute;
+        top: 0;
+    }
+    &:hover img#bellows {
+        animation: bellowsBounce 2s steps(5,start) infinite forwards;
+    }
 }
 
 .island {

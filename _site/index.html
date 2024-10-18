@@ -16,9 +16,13 @@
         <nav class="island" id="tab-picker">
             <a href="https://gasnotes.net" class="invisible-link">
                 <div id="site-title">
-                    <img src="/icons/gasper.png" alt="">
+                    <img src="/icons/gasper_nobellows.png" alt="">
+                    <img id="bellows" src="/icons/gasper_justbellows.png" alt="">
+                    <div class="clearfix"></div>
                     <p>Clinic Helper</p>
                 </div>
+                <script>
+                </script>
             </a>
             <ul>
                 <hr>
@@ -140,21 +144,21 @@
                         </label>
                     </div>
                     <div class="hstack">
-                        <label class="">
+                        <label class="quintuple">
                             Operation
                             <input type="text" id="" clinic-parameter="operation" clinic-search="Operation Name" autocomplete="off">
                         </label>
-                        <!-- <label>
-                            Severity
+                        <label>
+                            Surgical Risk
                             <div class="selectbox">
-                                <select id="mode" clinic-parameter="operation-complexity" clinic-search="Operation Severity">
+                                <select id="mode" clinic-parameter="operation-risk" clinic-search="Operation Severity">
                                     <option value="" selected></option>
-                                    <option value="minor">Minor</option>
-                                    <option value="moderate">Moderate</option>
-                                    <option value="major">Major</option>
+                                    <option value="low">Low</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="high">High</option>
                                 </select>
                             </div>
-                        </label> -->
+                        </label>
                     </div>
                 </div>
             </section>
@@ -199,6 +203,20 @@
                                 <input type="text" placeholder="Details" autocomplete="off" clinic-parameter="recently-ill-details">
                             </div>
                         </label>
+                        <label>
+                            GORD
+                            <div class="hstack">
+                                <div class="selectbox">
+                                    <select clinic-parameter="gord" clinic-search="GORD">
+                                        <option value="" selected></option>
+                                        <option value="none">No symptoms</option>
+                                        <option value="yes, medicated">Yes, on medication</option>
+                                        <option value="yes, NOT medicated">Yes, off medication</option>
+                                    </select>
+                                </div>
+                                <input type="text" clinic-parameter="gord-details" placeholder="Details">
+                            </div>
+                        </label>
                         <!-- <label>
                             GORD
                             <div class="hstack">
@@ -213,6 +231,35 @@
                                 <input type="text" clinic-parameter="gord-details" placeholder="Details">
                             </div>
                         </label> -->
+                        <div class="hstack">
+                            <label>
+                                FHx of CVD
+                                <div class="selectbox">
+                                    <select clinic-parameter="flat" clinic-search="Able to Lay Flat">
+                                        <option value="" selected></option>
+                                        <option value="yes">Yes</option>
+                                        <option value="NO">No</option>
+                                    </select>
+                                </div>
+                            </label>
+                            <label>
+                                Frailty Score
+                                <div class="selectbox">
+                                    <select clinic-parameter="rockwood-cfs" clinic-search="Rockwood Clinical Frailty Score" autocomplete="off">
+                                        <option value="" selected></option>
+                                        <option value="1 (very fit)">1 – Very Fit</option>
+                                        <option value="2 (well)">2 – Well</option>
+                                        <option value="3 (managing well)">3 – Managing Well</option>
+                                        <option value="4 (vulnerable)">4 – Vulnerable</option>
+                                        <option value="5 (mildly frail)">5 – Mildly Frail</option>
+                                        <option value="6 (moderately frail)">6 – Moderately Frail</option>
+                                        <option value="7 (severely frail)">7 – Severely Frail</option>
+                                        <option value="8 (very severely frail)">8 – Very Severely Frail</option>
+                                        <option value="9 (terminally ill)">9 – Terminally Ill</option>
+                                    </select>
+                                </div>
+                            </label>
+                        </div>
                         <div class="hstack">
                             <label>
                                 METs
@@ -235,29 +282,10 @@
                                 </div>
                             </label>
                         </div>
-                        <div class="hstack">
-                            <label>
-                                Exercise Tolerance
-                                <input type="text" clinic-parameter="mets-details" clinic-search="Exercise Tolerance" placeholder="">
-                            </label>
-                            <label>
-                                Frailty Score
-                                <div class="selectbox">
-                                    <select clinic-parameter="rockwood-cfs" clinic-search="Rockwood Clinical Frailty Score" autocomplete="off">
-                                        <option value="" selected></option>
-                                        <option value="1 (very fit)">1 – Very Fit</option>
-                                        <option value="2 (well)">2 – Well</option>
-                                        <option value="3 (managing well)">3 – Managing Well</option>
-                                        <option value="4 (vulnerable)">4 – Vulnerable</option>
-                                        <option value="5 (mildly frail)">5 – Mildly Frail</option>
-                                        <option value="6 (moderately frail)">6 – Moderately Frail</option>
-                                        <option value="7 (severely frail)">7 – Severely Frail</option>
-                                        <option value="8 (very severely frail)">8 – Very Severely Frail</option>
-                                        <option value="9 (terminally ill)">9 – Terminally Ill</option>
-                                    </select>
-                                </div>
-                            </label>
-                        </div>
+                        <label>
+                            Exercise Tolerance
+                            <input type="text" clinic-parameter="mets-details" clinic-search="Exercise Tolerance" placeholder="">
+                        </label>
                         <hr>
                         <label>
                             Smoking
