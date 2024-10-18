@@ -1203,14 +1203,8 @@ let allDiagnoses = [
         html: `
             <div class="hstack">
                 <label>
-                    Hypoglycaemia Aware
-                    <div class="selectbox">
-                        <select diagnosis-parameter="Hypoglycaemia awareness">
-                            <option value="" selected></option>
-                            <option value="intact">Yes</option>
-                            <option value="NO">No</option>
-                        </select>
-                    </div>
+                    Year Diagnosed
+                    <input type="text" diagnosis-parameter="Year diagnosed">
                 </label>
                 <label>
                     HbA1c
@@ -1219,12 +1213,12 @@ let allDiagnoses = [
             </div>
             <div class="hstack">
                 <label>
-                    Insulin Pump
+                    Hypoglycaemia Aware
                     <div class="selectbox">
-                        <select diagnosis-parameter="Insulin pump in use">
+                        <select diagnosis-parameter="Hypoglycaemia awareness">
                             <option value="" selected></option>
-                            <option value="YES">Yes</option>
-                            <option value="no">No</option>
+                            <option value="intact">Yes</option>
+                            <option value="NO">No</option>
                         </select>
                     </div>
                 </label>
@@ -1270,11 +1264,7 @@ let allDiagnoses = [
                     Aetiology
                     <input type="text" diagnosis-parameter="Aetiology">
                 </label>
-            </div>
-            <label>
-                Echo Findings
-                <input type="text" diagnosis-parameter="Echo">
-            </label>`
+            </div>`
     },
     {
         matchable_string: "essential hypertension htn",
@@ -1397,6 +1387,19 @@ let allDiagnoses = [
                 </label>
             </div>
             <label>
+                mMRC Dyspnoea Scale
+                <div class="selectbox">
+                    <select diagnosis-parameter="mMRC dyspnoea" autocomplete="off">
+                        <option value="" selected></option>
+                        <option value="0">0 – Dyspnea only with strenuous exercise</option>
+                        <option value="1">1 – Dyspnea when hurrying or walking up a slight hill</option>
+                        <option value="2">2 – Walks slower than people of the same age because of dyspnea or has to stop for breath when walking at own pace</option>
+                        <option value="3">3 – Stops for breath after walking 100 yards (91 m) or after a few minutes</option>
+                        <option value="4">4 – Too dyspneic to leave house or breathless when dressing</option>
+                    </select>
+                </div>
+            </label>
+            <label>
                 Recent Exacerbations
                 <input type="text" diagnosis-parameter="Recent exacerbations">
             </label>
@@ -1482,24 +1485,12 @@ let allDiagnoses = [
         name: "Aortic Stenosis",
         id: "diagnosis-aortic-stenosis",
         html: `
-            <div class="hstack">
-                <label>
-                    Last Echo
-                    <input type="text" diagnosis-parameter="Echo" placeholder="Date and provider">
-                </label>
-            </div>
-            <div class="hstack">
-                <label>
-                    <span>Valve Area (cm<sup>2</sup>)</span>
-                    <input type="number" step="0.01" min="0" max="10" diagnosis-parameter="Area">
-                </label>
-                <label>
-                    Peak Gradient (mmHg)
-                    <input type="number" min="0" max="100"  diagnosis-parameter="Peak gradient">
-                </label>
-            </div>
             <label>
-                Symptom burden
+                Radiographic Severity
+                <input type="text" diagnosis-parameter="Radiographic severity">
+            </label>
+            <label>
+                Symptom Burden
                 <input type="text" diagnosis-parameter="Symptoms">
             </label>`
     },
@@ -1528,28 +1519,6 @@ let allDiagnoses = [
             </div>
             <div class="hstack">
                 <label>
-                    Anticoagulated
-                    <div class="selectbox">
-                        <select diagnosis-parameter="Anticoagulated" autocomplete="off">
-                            <option value="" selected></option>
-                            <option value="YES">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </label>
-                <label>
-                    Structural Disease
-                    <div class="selectbox">
-                        <select diagnosis-parameter="Structural disease" autocomplete="off">
-                            <option value="" selected></option>
-                            <option value="YES">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </label>
-            </div>
-            <div class="hstack">
-                <label>
                     Rate Control
                     <input type="text" step="1" min="0" max="8" diagnosis-parameter="Rate control">
                 </label>
@@ -1557,7 +1526,17 @@ let allDiagnoses = [
                     Rhythm Control
                     <input type="text" step="1" min="0" max="8" diagnosis-parameter="Rhythm control">
                 </label>
-            </div>`
+            </div>
+            <label>
+                Anticoagulated
+                <div class="selectbox">
+                    <select diagnosis-parameter="Anticoagulated" autocomplete="off">
+                        <option value="" selected></option>
+                        <option value="YES">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </label>`
     },
     {
         matchable_string: "hypothyroidism low T4",
@@ -1588,17 +1567,14 @@ let allDiagnoses = [
                             <option value="" selected></option>
                             <option value="single">Single</option>
                             <option value="dual">Dual</option>
+                            <option value="none">None</option>
                         </select>
                     </div>
                 </label>
             </div>
             <label>
-                Management
-                <input type="text" diagnosis-parameter="Management">
-            </label>
-            <label>
-                Treating Cardiologist
-                <input type="text" diagnosis-parameter="Treating cardiologist">
+                Last Stress Test
+                <input type="text" diagnosis-parameter="Last stress test" placeholder="Date and findings">
             </label>`
     },
     {
@@ -1642,7 +1618,7 @@ let allDiagnoses = [
         html: `
             <div class="hstack">
                 <label>
-                    Details of Infarct
+                    Details of Infarct(s)
                     <input type="text" diagnosis-parameter="Infarct details">
                 </label>
             </div>
@@ -1753,8 +1729,8 @@ let allDiagnoses = [
     },
     {
         matchable_string: "iron deficiency anaemia",
-        name: "Iron Deficiency Anaemia",
-        id: "diagnosis-iron-deficiency-anaemia",
+        name: "Anaemia",
+        id: "diagnosis-anaemia",
         html: `
             <label>
                 Aetiology
@@ -1816,6 +1792,10 @@ let allDiagnoses = [
         name: "Liver Cirrhosis",
         id: "diagnosis-cirrhosis",
         html: `
+            <label>
+                Aetiology
+                <input type="text" diagnosis-parameter="Aetiology">
+            </label>
             <div class="hstack">
                 <label>
                     Child-Pugh Class
@@ -1845,18 +1825,20 @@ let allDiagnoses = [
                     </div>
                 </label>
                 <label>
-                    Disposition
+                    Coagulopathy
                     <div class="selectbox">
-                        <select diagnosis-parameter="Treatment disposition/direction" autocomplete="off">
+                        <select diagnosis-parameter="Coagulopathy" autocomplete="off">
                             <option value="" selected></option>
-                            <option value="transplant">Transplant</option>
-                            <option value="TIPS">TIPS</option>
-                            <option value="conservative">Conservative</option>
-                            <option value="palliation">Palliation</option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
                         </select>
                     </div>
                 </label>
-            </div>`
+            </div>
+            <label>
+                Ascites Management
+                <input type="text" diagnosis-parameter="Ascites management">
+            </label>`
     },
     {
         matchable_string: "obstructive sleep apnoea",
@@ -1882,9 +1864,13 @@ let allDiagnoses = [
     },
     {
         matchable_string: "alzheimer's dementia",
-        name: "Alzheimer's Dementia",
+        name: "Dementia",
         id: "diagnosis-alzheimers",
         html: `
+            <label>
+                Aetiology
+                <input type="text" diagnosis-parameter="Aetiology">
+            </label>
             <div class="hstack">
                 <label>
                     Baseline MoCA/MMSE
@@ -1903,7 +1889,7 @@ let allDiagnoses = [
             </div>`
     },
     {
-        matchable_string: "steatohepatitis nonoalcoholic fatty liver disease",
+        matchable_string: "steatohepatitis nonalcoholic fatty liver disease",
         name: "Steatohepatitis",
         id: "diagnosis-steatohepatitis",
         html: ``
@@ -1961,25 +1947,14 @@ let allDiagnoses = [
         html: `
             <div class="hstack">
                 <label>
-                    Carries Adrenaline
+                    Confirmed Diagnosis
                     <div class="selectbox">
-                        <select diagnosis-parameter="Carries adrenaline injector">
-                            <option value="" selected></option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </label>
-                <label>
-                    Anaesthesia Related
-                    <div class="selectbox">
-                        <select diagnosis-parameter="Anaesthesia-related">
+                        <select diagnosis-parameter="Confirmed diagnosis">
                             <option value="" selected></option>
                             <option value="YES">Yes</option>
                             <option value="no">No</option>
                         </select>
                     </div>
-                </label>
             </div>
             <label>
                 Triggers
@@ -2051,6 +2026,56 @@ let allDiagnoses = [
                 Trigger Frequency
                 <input type="text" diagnosis-parameter="Trigger frequency">
             </label>`
+    },
+    {
+        matchable_string: "abdominal aortic aneurysm",
+        name: "AAA",
+        id: "diagnosis-aaa",
+        html: `
+            <div class="hstack">
+                <label>
+                    Size (cm)
+                    <input type="number" min="0" max="30" step="0.1" diagnosis-parameter="Size">
+                </label>
+                <label>
+                    Stable
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Stable" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="yes">Yes</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
+    },
+    {
+        matchable_string: "osteoporosis",
+        name: "Osteoporosis",
+        id: "diagnosis-osteoporosis",
+        html: ``
+    },
+    {
+        matchable_string: "transcatheter aortic valve implant replacment",
+        name: "TAVI",
+        id: "diagnosis-tavi",
+        html: `
+            <div class="hstack">
+                <label>
+                    Year Implanted
+                    <input type="text" diagnosis-parameter="Year implanted">
+                </label>
+                <label>
+                    Known Leak
+                    <div class="selectbox">
+                        <select diagnosis-parameter="Known leak" autocomplete="off">
+                            <option value="" selected></option>
+                            <option value="YES">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </label>
+            </div>`
     },
 ]
 

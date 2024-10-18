@@ -178,6 +178,55 @@ let boneData = [
                     "Admit to monitored bed",
                 ],
             },
+            {
+                matchStrategy: "any",
+                matchRules: [
+                    (inputData) => {
+                        let age = parseInt(inputData['age'])
+                        let risk = inputData['operation-risk']
+                        // high risk surgery and over-45
+                        if (age > 45 && risk == 'high') return true
+                    },
+                ],
+                suggestions: [
+                    "Consider pre-operative cardiac biomarker testing (troponin, BNP)",
+                    "Pre-operative ECG",
+                ],
+            },
+            {
+                matchStrategy: "any",
+                matchRules: [
+                    (inputData) => {
+                        let age = parseInt(inputData['age'])
+                        let risk = inputData['operation-risk']
+                        // high risk surgery and over-45
+                        if (age > 45 && risk == 'high') return true
+                        // intermediate risk surgery and over-65
+                        if (age >= 65 && risk == 'intermediate') return true
+                        // intermediate risk surgery and CVD risk factors
+                        let riskFactorCount = 0
+                        let riskyDiagnoses = [
+                            'diagnosis-t1dm',
+                            'diagnosis-t2dm',
+                            'diagnosis-hypertension',
+                            'diagnosis-dyslipidaemia',
+                        ]
+                        for (let d of riskyDiagnoses) {
+                            if (diagnosisExists(inputData, d)) riskFactorCount += 1
+                        }
+                        if (inputData['smoking'] == 'active smoker') riskFactorCount += 1
+
+                        if (risk == 'intermediate' && riskFactorCount >= 3) return true
+                        if (risk == 'intermediate' && diagnosisExists(inputData, 'diagnosis-ihd')) return true
+                        if (risk == 'intermediate' && diagnosisExists(inputData, 'diagnosis-ccf')) return true
+                    },
+                ],
+                suggestions: [
+                    "Consider pre-operative cardiac biomarker testing (troponin, BNP)",
+                    "Pre-operative ECG",
+                    "Consider pre-operative cardiac functional testing (e.g. MPS, stress TTE)",
+                ],
+            },
         ],
         severityGrades: [
         ],
@@ -261,7 +310,7 @@ let boneData = [
                     (inputData) => parseFloat(inputData['hba1c']) >= 9.1,
                 ],
                 suggestions: [
-                    "Endocrinology referral for pre-operative optimisation",
+                    "Consider endocrinology referral for pre-operative optimisation",
                 ],
             },
         ],
@@ -289,7 +338,7 @@ let boneData = [
                     (inputData) => parseFloat(inputData['hba1c']) >= 9.1,
                 ],
                 suggestions: [
-                    "Endocrinology referral for pre-operative optimisation",
+                    "Consider endocrinology referral for pre-operative optimisation",
                 ],
             },
         ],
@@ -323,6 +372,7 @@ let boneData = [
             (inputData) => /diff|3|4|AFO|CICO|FONA|fail/i.test(inputData['ett']),
             (inputData) => /moderate|severe|immobile/i.test(inputData['neckrom']),
             (inputData) => /won/i.test(inputData['beard']),
+            (inputData) => /y/i.test(inputData['diagnosis-rheumatoid-arthritis']['C-Spine involvement'])
         ],
         defaultSuggestions: [
         ],
@@ -610,7 +660,7 @@ let boneData = [
         ],
     },
     {
-        name: "Poor Asthma Control",
+        name: "Suboptimal Asthma Control",
         citation: "",
         matchStrategy: "any",
         matchRules: [
@@ -623,6 +673,7 @@ let boneData = [
             },
         ],
         defaultSuggestions: [
+            "Consider referral for optimisation of asthma control"
         ],
         conditionalSuggestions: [
         ],
@@ -636,12 +687,6 @@ let boneData = [
         matchRules: [
             (inputData) => diagnosisExists(inputData, 'diagnosis-icd'),
         ],
-        defaultSuggestions: [
-        ],
-        conditionalSuggestions: [
-        ],
-        severityGrades: [
-        ],
     },
     {
         name: "Pacemaker in situ",
@@ -651,6 +696,55 @@ let boneData = [
             (inputData) => diagnosisExists(inputData, 'diagnosis-pacemaker'),
         ],
     },
+    {
+        name: "Immune Suppressed",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => /y/i.test(inputData['diagnosis-rheumatoid-arthritis']['Immune suppressed'])
+        ],
+    },
+    {
+        name: "COPD",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-copd')
+        ],
+    },
+    {
+        name: "Aortic Stenosis",
+        citation: "",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => diagnosisExists(inputData, 'diagnosis-aortic-stenosis')
+        ],
+    },
+    // {
+    //     name: "Cardiovascular Disease",
+    //     citation: "https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines",
+    //     matchStrategy: "any",
+    //     matchRules: [
+    //         (inputData) => true,
+    //     ],
+    //     defaultSuggestions: [
+    //         // "foobar",
+    //     ],
+    //     conditionalSuggestions: [
+    //         {
+    //             matchStrategy: "all",
+    //             matchRules: [
+    //                 (inputData) => inputData['operation-risk'] == 'high',
+    //                 (inputData) => parseInt(inputData['age']) > 45,
+    //             ],
+    //             suggestions: [
+    //                 "Recommendations: over 45 and high risk",
+    //             ],
+    //         },
+    //     ],
+    //     severityGrades: [
+    //     ],
+    // },
 ]
 
 let bones = []
