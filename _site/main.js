@@ -184,11 +184,15 @@ beagle.addEventListener('message', (m) => {
     // add bones
     if (m.data['type'] == 'beagle-bone-add') {
         
-        if (m.data.id == "beagle-anonymous") return
+        // if (m.data.id == "beagle-anonymous") return
 
         let toAdd = document.createElement('ul')
         toAdd.classList.add('pill-list')
         toAdd.setAttribute('beagle-bone-id', m.data.id)
+
+        if (m.data.auto_hide == true) {
+            toAdd.classList.add('auto_hide')
+        }
 
         let firstPill = document.createElement('li')
         firstPill.classList.add('issue-pill')
@@ -2743,6 +2747,11 @@ let citationSnippets = [
         publication: 'esc-2022'
     },
     {
+        id: 'ads-anzca-2022',
+        body: ``,
+        publication: 'ads-anzca-2022'
+    },
+    {
         id: 'rcri-interpretation',
         body: `
             <p>The Revised Cardiac Risk Index (RCRI) was originally published by <a href="https://doi.org/10.1056/nejm197710202971601">Goldman et al. (1977)</a>, though the original publication is widely understood to have under-estimated 30-day MAC risk. A more modern meta-analysis by <a href="https://doi.org/10.1016/j.cjca.2016.09.008">Duceppe et al. (2017)</a> has provided updated risk estimates:</a></p>
@@ -2801,6 +2810,12 @@ let allPublications = [
         url: 'https://doi.org/10.1016/j.cjca.2016.09.008',
         ugly: `Duceppe E, Parlow J, MacDonald P, Lyons K, McMullen M, Srinathan S, et al. Canadian Cardiovascular Society Guidelines on Perioperative Cardiac Risk Assessment and Management for Patients Who Undergo Noncardiac Surgery. Canadian Journal of Cardiology. 2017 Jan 1;33(1):17–32.`,
         pretty: `Canadian Cardiovascular Society Guidelines on Perioperative Cardiac Risk Assessment and Management for Patients Who Undergo Noncardiac Surgery`,
+    },
+    {
+        id: 'ads-anzca-2022',
+        url: 'https://www.diabetessociety.com.au/guideline/ads-anzca-perioperative-diabetes-and-hyperglycaemia-guidelines-adults-november-2022/',
+        ugly: `ADS-ANZCA Perioperative Diabetes and Hyperglycaemia Guidelines Adults (November 2022) [Internet]. Australian Diabetes Society. [cited 2024 Nov 5]. Available from: https://www.diabetessociety.com.au/guideline/ads-anzca-perioperative-diabetes-and-hyperglycaemia-guidelines-adults-november-2022/`,
+        pretty: `ADS-ANZCA Perioperative Diabetes and Hyperglycaemia Guidelines Adults (November 2022)`,
     },
 ]
 

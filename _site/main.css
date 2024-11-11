@@ -324,16 +324,14 @@ footer {
 
 /* hide suggestions box when there are none */
 /* bit of an ugly selector, sigh */
-#warnings-container:not(:has(li:not(.issue-pill))) {
+#warnings-container {
     display: none;
 }
-#warnings {
-    #anonymous-suggestions {
-        display: none;
-    }
-    #anonymous-suggestions:has([beagle-suggestion-name]) {
-        display: grid;
-    }
+#warnings-container:has([beagle-suggestion-name], #warnings > ul:not(.auto_hide)) {
+    display: flex;
+}
+ul.auto_hide:not(:has([beagle-suggestion-name])) {
+    display: none;
 }
 .pill-list {
     display: grid;
@@ -901,7 +899,7 @@ button.infobutton {
 
     /* position */
     vertical-align: text-bottom;
-    margin-bottom: 1px;
+    /* margin-bottom: 1px; */
 
     /* position: relative; */
 
@@ -1018,7 +1016,7 @@ dialog.clinic-modal-popup-dialog::backdrop {
 
         /* Anchor positioning */
         top: anchor(bottom) !important;
-        margin-bottom: 10px;
+        margin: 0.5rem 1.5rem 1.5rem 1.5rem;
         justify-self: anchor-center;
         /* margin: 0.2rem 1.5rem; */
     }

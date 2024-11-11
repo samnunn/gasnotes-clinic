@@ -30,6 +30,7 @@ onmessage = (m) => {
             name: newBones[b].name,
             id: newBones[b].id,
             citation: newBones[b].citation,
+            auto_hide: newBones[b].auto_hide,
         })
     }
     // DELETE
@@ -89,11 +90,20 @@ function getBones(inputData) {
         if (boneDoesMatch == true) {
             let conditionalSuggestions = b.getConditionalSuggestions(inputData)
             let allSuggestions = b.defaultSuggestions.concat(conditionalSuggestions)
+            let name
+            name = b.static_name
+            try {
+                name = b.dynamic_name(inputData)
+            } catch (e) {
+                console.info(`Failed to execute dynamic_name for "${b.id}" (function may have failed or be non-existent). Assigning static_name.`, e)
+            }
+
             let foundBone = {
-                name: typeof b.name == 'function' ? b.name(inputData) : b.name,
+                name: name,
                 id: b.id,
                 citation: b.citation,
                 suggestions: new Set(allSuggestions),
+                auto_hide: b.auto_hide,
             }
             newBones[b.id] = foundBone
         }
@@ -132,9 +142,11 @@ function gradeOSA(inputData) {
 }
 
 class Bone {
-    constructor(name, id, matchStrategy, matchRules, defaultSuggestions, conditionalSuggestions, severityGrades) {
-        this.name = name
+    constructor(dynamic_name, static_name, id, auto_hide, matchStrategy, matchRules, defaultSuggestions, conditionalSuggestions, severityGrades) {
+        this.dynamic_name = dynamic_name
+        this.static_name = static_name
         this.id = id
+        this.auto_hide = auto_hide == true
         this.matchStrategy = matchStrategy
         this.matchRules = matchRules
         this.defaultSuggestions = defaultSuggestions
@@ -183,11 +195,45 @@ class Bone {
 
 let boneData = [
     {
-        name: "anonymous",
+        static_name: "Additional Suggestions",
 		id: "beagle-anonymous",
+        auto_hide: true,
         matchStrategy: "any",
         matchRules: [
             (inputData) => true,
+        ],
+        defaultSuggestions: [
+            // {
+            //     'name': "foobar",
+            // }
+        ],
+        conditionalSuggestions: [
+            // {
+            //     matchStrategy: "any",
+            //     matchRules: [
+            //         (inputData) => parseFloat(inputData['sort-score']) > 1.5,
+            //     ],
+            //     suggestions: [
+            //         {
+            //             name: "Generic suggestion",
+            //         }
+            //     ],
+            // },
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        // name: "High predicted mortality",
+        dynamic_name: (inputData) => {
+            let sort = parseFloat(inputData['sort-score']).toFixed(2)
+            return `High predicted mortality (SORT ${sort}%)`
+        },
+        static_name: "High predicted mortality",
+		id: "sort-high",
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => parseFloat(inputData['sort-score']) >= 0.80,
         ],
         defaultSuggestions: [
             // "foobar",
@@ -218,27 +264,43 @@ let boneData = [
                     }
                 ],
             },
-            {
-                matchStrategy: "any",
-                matchRules: [
-                    (inputData) => {
-                        let age = parseInt(inputData['age'])
-                        let risk = inputData['operation-risk']
-                        // high risk surgery and over-45
-                        if (age > 45 && risk == 'high') return true
-                    },
-                ],
-                suggestions: [
-                    {
-                        name: "Pre-operative cardiac biomarker testing (troponin, BNP)",
-                        citation: 'esc-2022',
-                    },
-                    {
-                        name: "Pre-operative screening ECG",
-                        citation: 'esc-2022',
-                    }
-                ],
-            },
+        ],
+        severityGrades: [
+        ],
+    },
+    {
+        static_name: "High MACE risk",
+		id: "beagle-mace-risk",
+        auto_hide: true,
+        matchStrategy: "any",
+        matchRules: [
+            (inputData) => true,
+        ],
+        defaultSuggestions: [
+            // "foobar",
+        ],
+        conditionalSuggestions: [
+            // {
+            //     matchStrategy: "any",
+            //     matchRules: [
+            //         (inputData) => {
+            //             let age = parseInt(inputData['age'])
+            //             let risk = inputData['operation-risk']
+            //             // high risk surgery and over-45
+            //             if (age > 45 && risk == 'high') return true
+            //         },
+            //     ],
+            //     suggestions: [
+            //         {
+            //             name: "Pre-operative cardiac biomarker testing (troponin, BNP)",
+            //             citation: 'esc-2022',
+            //         },
+            //         {
+            //             name: "Pre-operative screening ECG",
+            //             citation: 'esc-2022',
+            //         }
+            //     ],
+            // },
             {
                 matchStrategy: "any",
                 matchRules: [
@@ -282,12 +344,12 @@ let boneData = [
                     },
                 ],
             },
-        ],
-        severityGrades: [
-        ],
+
+        ]
     },
     {
-        name: (inputData) => {
+        static_name: "High PONV risk",
+        dynamic_name: (inputData) => {
             return `High PONV risk (Apfel ${parseInt(inputData['apfel-score'])}/4)`
         },
 		id: "beagle-ponv",
@@ -333,7 +395,7 @@ let boneData = [
         severityGrades: [],
     },
     {
-        name: "T2DM",
+        static_name: "T2DM",
 		id: "beagle-t2dm",
         matchStrategy: "any",
         matchRules: [
@@ -345,6 +407,7 @@ let boneData = [
             // "Default suggestion for diabetic patients",
             {
                 name: "Check BSL on arrival",
+                citation: 'ads-anzca-2022',
             },
         ],
         conditionalSuggestions: [
@@ -356,6 +419,7 @@ let boneData = [
                 suggestions: [
                     {
                         name: "Consider endocrinology referral for pre-operative optimisation",
+                        citation: 'ads-anzca-2022',
                     },
                 ],
             },
@@ -364,7 +428,7 @@ let boneData = [
         ],
     },
     {
-        name: "T1DM",
+        static_name: "T1DM",
 		id: "beagle-t1dm",
         matchStrategy: "any",
         matchRules: [
@@ -373,6 +437,7 @@ let boneData = [
         defaultSuggestions: [
             {
                 name: "Check BSL and ketones on arrival",
+                citation: 'ads-anzca-2022',
             },
         ],
         conditionalSuggestions: [
@@ -384,6 +449,7 @@ let boneData = [
                 suggestions: [
                     {
                         name: "Consider endocrinology referral for pre-operative optimisation",
+                        citation: 'ads-anzca-2022',
                     },
                 ],
             },
@@ -392,7 +458,7 @@ let boneData = [
         ],
     },
     {
-        name: "SGTL2i in use",
+        static_name: "SGTL2i in use",
 		id: "beagle-flozin",
         matchStrategy: "any",
         matchRules: [
@@ -402,13 +468,14 @@ let boneData = [
             // "Default suggestion for patients on SGLT2i",
             {
                 name: "Check ketones on arrival",
+                citation: 'ads-anzca-2022',
             },
         ],
         conditionalSuggestions: [
         ],
     },
     {
-        name: "Potentially challenging airway",
+        static_name: "Potentially challenging airway",
 		id: "beagle-difficult-airway",
         matchStrategy: "any",
         matchRules: [
@@ -431,7 +498,7 @@ let boneData = [
         ],
     },
     {
-        name: "Possible difficult FONA",
+        static_name: "Possible difficult FONA",
 		id: "beagle-difficult-fona",
         matchStrategy: "any",
         matchRules: [
@@ -443,7 +510,7 @@ let boneData = [
         ],
     },
     {
-        name: "Known analphylaxis",
+        static_name: "Known analphylaxis",
 		id: "beagle-analphylaxis",
         matchStrategy: "any",
         matchRules: [
@@ -458,7 +525,7 @@ let boneData = [
         ],
     },
     {
-        name: "Antibiotic allergy",
+        static_name: "Antibiotic allergy",
 		id: "beagle-antibiotic-allergy",
         matchStrategy: "any",
         matchRules: [
@@ -472,7 +539,7 @@ let boneData = [
         ],
     },
     {
-        name: "Obesity",
+        static_name: "Obesity",
 		id: "beagle-obesity",
         matchStrategy: "any",
         matchRules: [
@@ -486,7 +553,7 @@ let boneData = [
         ],
     },
     {
-        name: "GORD",
+        static_name: "GORD",
 		id: "beagle-gord",
         matchStrategy: "any",
         matchRules: [
@@ -502,7 +569,8 @@ let boneData = [
         ],
     },
     {
-        name: (inputData) => {
+        static_name: "OSA",
+        dynamic_name: (inputData) => {
             if (diagnosisExists(inputData, 'diagnosis-osa')) {
                 if (/y/i.test(inputData['diagnosis-osa']['CPAP'])) {
                     return "Diagnosed OSA (on CPAP)"
@@ -529,7 +597,7 @@ let boneData = [
         ],
     },
     {
-        name: "Impaired renal function",
+        static_name: "Impaired renal function",
 		id: "beagle-renal-function",
         matchStrategy: "any",
         matchRules: [
@@ -545,7 +613,7 @@ let boneData = [
         ],
     },
     {
-        name: "Active smoker",
+        static_name: "Active smoker",
 		id: "beagle-active-smoker",
         matchStrategy: "any",
         matchRules: [
@@ -565,7 +633,7 @@ let boneData = [
         ],
     },
     {
-        name: "Anticoagulated",
+        static_name: "Anticoagulated",
 		id: "beagle-anticoagulated",
         matchStrategy: "any",
         matchRules: [
@@ -580,7 +648,7 @@ let boneData = [
         ],
     },
     {
-        name: "Poor cardiorespiratory fitness",
+        static_name: "Poor cardiorespiratory fitness",
 		id: "beagle-unfit",
         matchStrategy: "any",
         matchRules: [
@@ -594,7 +662,7 @@ let boneData = [
         ],
     },
     {
-        name: "Unable to lay flat",
+        static_name: "Unable to lay flat",
 		id: "beagle-noflat",
         matchStrategy: "any",
         matchRules: [
@@ -608,7 +676,7 @@ let boneData = [
         ],
     },
     {
-        name: "Opioid tolerance",
+        static_name: "Opioid tolerance",
 		id: "beagle-opioid-tolerance",
         matchStrategy: "any",
         matchRules: [
@@ -623,7 +691,7 @@ let boneData = [
         ],
     },
     {
-        name: "Chronic pain",
+        static_name: "Chronic pain",
 		id: "beagle-chronic-pain",
         matchStrategy: "any",
         matchRules: [
@@ -638,7 +706,7 @@ let boneData = [
         ],
     },
     {
-        name: "Ischaemic heart disease",
+        static_name: "Ischaemic heart disease",
 		id: "beagle-ihd",
         matchStrategy: "any",
         matchRules: [
@@ -653,7 +721,7 @@ let boneData = [
         ],
     },
     {
-        name: "Heart failure",
+        static_name: "Heart failure",
 		id: "beagle-heart-failure",
         matchStrategy: "any",
         matchRules: [
@@ -668,7 +736,7 @@ let boneData = [
         ],
     },
     {
-        name: "Recent illness",
+        static_name: "Recent illness",
 		id: "beagle-recent-illness",
         matchStrategy: "any",
         matchRules: [
@@ -682,7 +750,7 @@ let boneData = [
         ],
     },
     {
-        name: "NSAID-reactive asthma",
+        static_name: "NSAID-reactive asthma",
 		id: "beagle-asthma-nsaids",
         matchStrategy: "any",
         matchRules: [
@@ -699,7 +767,7 @@ let boneData = [
         ],
     },
     {
-        name: "Suboptimal asthma control",
+        static_name: "Suboptimal asthma control",
 		id: "beagle-asthma-control",
         matchStrategy: "any",
         matchRules: [
@@ -722,7 +790,7 @@ let boneData = [
         ],
     },
     {
-        name: "ICD in situ",
+        static_name: "ICD in situ",
 		id: "beagle-icd",
         matchStrategy: "any",
         matchRules: [
@@ -730,7 +798,7 @@ let boneData = [
         ],
     },
     {
-        name: "Pacemaker in situ",
+        static_name: "Pacemaker in situ",
 		id: "beagle-pacemaker",
         matchStrategy: "any",
         matchRules: [
@@ -738,7 +806,7 @@ let boneData = [
         ],
     },
     {
-        name: "Immune-suppressed",
+        static_name: "Immune-suppressed",
 		id: "beagle-immune-suppressed",
         matchStrategy: "any",
         matchRules: [
@@ -746,7 +814,7 @@ let boneData = [
         ],
     },
     {
-        name: "COPD",
+        static_name: "COPD",
 		id: "beagle-copd",
         matchStrategy: "any",
         matchRules: [
@@ -754,7 +822,7 @@ let boneData = [
         ],
     },
     {
-        name: "Aortic stenosis",
+        static_name: "Aortic stenosis",
 		id: "beagle-aortic-stenosis",
         matchStrategy: "any",
         matchRules: [
@@ -791,5 +859,5 @@ let boneData = [
 let bones = []
 for (b of boneData) {
     // provide default empty array from non-essential items
-    bones.push(new Bone(b.name, b.id, b.matchStrategy, b.matchRules, b.defaultSuggestions || [], b.conditionalSuggestions || [], b.severityGrades || []))
+    bones.push(new Bone(b.dynamic_name, b.static_name, b.id, b.auto_hide, b.matchStrategy, b.matchRules, b.defaultSuggestions || [], b.conditionalSuggestions || [], b.severityGrades || []))
 }
