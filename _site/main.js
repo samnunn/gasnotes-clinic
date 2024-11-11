@@ -2299,19 +2299,19 @@ customElements.define('clinic-diagnosis', class extends HTMLElement {
 
             // actual removal
             this.remove()
-            
-            // Plan A: focus next sibling
+
+            // move focus
             if (nextDiagnosis?.matches('clinic-diagnosis')) {
-                setFocusedDiagnosis(nextDiagnosis)
+                // Plan A: focus next sibling
+                setFocusedDiagnosis(nextDiagnosis, true)
+            } else if (prevDiagnosis?.matches('clinic-diagnosis')) {
+                // Plan B: focus previous sibling
+                setFocusedDiagnosis(prevDiagnosis, true)
+            } else {
+                // Plan C: focus search box
+                diagnosisSearchBox.focus()
             }
 
-            // Plan B: focus previous sibling
-            if (prevDiagnosis?.matches('clinic-diagnosis')) {
-                setFocusedDiagnosis(prevDiagnosis)
-            }
-
-            // Plan C: focus search box
-            diagnosisSearchBox.focus()
         }
     }
 
@@ -2350,15 +2350,14 @@ function insertClinicDiagnosis(data, target, position, focus=true) {
 
     if (focus == true) {
         // Open it and set focus on the first non-title input element (be it a textarea or an input)
-        setFocusedDiagnosis(newDiagnosisElement)
-        setTimeout(() => { newDiagnosisElement.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
+        setFocusedDiagnosis(newDiagnosisElement, true)
     }
 
     return newDiagnosisElement
 }
 
 // Handle expansion/shrinking of each diagnosis
-function setFocusedDiagnosis(target) {
+function setFocusedDiagnosis(target, focusfirstelement=false) {
     // unfocus all
     for (let t of diagnosisList.querySelectorAll('clinic-diagnosis')) {
         t.removeAttribute('aria-selected')
@@ -2369,6 +2368,10 @@ function setFocusedDiagnosis(target) {
         // if (!target.matches(':has(*:not(button):focus)')) {
         //     setTimeout(() => { target.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
         // }
+    }
+
+    if (focusfirstelement) {
+        setTimeout(() => { target.querySelector('select, textarea, input:not(.diagnosis-title)').focus() }, 0)
     }
 }
 
