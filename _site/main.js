@@ -1334,7 +1334,7 @@ let allDiagnoses = [
                 <label>
                     Smoking
                     <div class="selectbox">
-                        <select diagnosis-parameter="Smoking" clinic-sync="smoking" autocomplete="off">
+                        <select diagnosis-parameter="Smoking" clinic-parameter="smoking" autocomplete="off">
                             <option value="" selected></option>
                             <option value="active smoker">Active smoker</option>
                             <option value="ex-smoker">Ex-smoker</option>
