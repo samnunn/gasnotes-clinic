@@ -2109,7 +2109,7 @@ let allDiagnoses = [
                     <input type="number" min="0" max="9" step="1" diagnosis-parameter="Beighton score">
                 </label>
                 <label>
-                    Manifestataions
+                    Manifestations
                     <div class="selectbox">
                         <select diagnosis-parameter="Manifestations" autocomplete="off">
                             <option value="" selected></option>
