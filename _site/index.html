@@ -801,7 +801,16 @@
                                 </div>
                             </label>
                             
-                            <span clinic-calculator-interpretation><span clinic-parameter="sort-score"></span>% 30-day mortality</span>
+                            <span clinic-calculator-interpretation>
+                                <span clinic-parameter="sort-score"></span>% 30-day mortality
+                                <clinic-modal-popup>
+                                    <button class="infobutton"></button>
+                                    <template>
+                                        <clinic-citation-snippet citation-id="sort-calculator-explanation"></clinic-citation-snippet>
+                                    </template>
+                                </clinic-modal-popup>
+                            </span>
+
                         </div>
                         
                     </div>
