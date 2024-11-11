@@ -2385,6 +2385,9 @@ diagnosisList.addEventListener('keydown', (e) => {
     if (e.key == "Escape") {
         diagnosisSearchBox.focus()
     }
+    if (e.key == "Backspace" && (e.metaKey || e.altKey)) {
+        document.querySelector('clinic-diagnosis:focus-within')?.delete()
+    }
 })
 
 // SEARCH RESULTS
