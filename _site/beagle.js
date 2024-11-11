@@ -331,7 +331,7 @@ let boneData = [
                 ],
                 suggestions: [
                     {
-                        name: "Consider pre-operative cardiac biomarker testing (troponin, BNP)",
+                        name: "Pre-operative cardiac biomarker testing (troponin, BNP)",
                         citation: 'esc-2022',
                     },
                     {
@@ -339,7 +339,7 @@ let boneData = [
                         citation: 'esc-2022',
                     },
                     {
-                        name: "Consider pre-operative cardiac functional testing (e.g. MPS, stress TTE)",
+                        name: "Pre-operative cardiac functional testing (e.g. MPS, stress TTE)",
                         citation: 'esc-2022',
                     },
                 ],
@@ -414,12 +414,13 @@ let boneData = [
             {
                 matchStrategy: "any",
                 matchRules: [
-                    (inputData) => parseFloat(inputData['hba1c']) >= 9.1,
+                    (inputData) => parseFloat(inputData['hba1c']) > 9.0,
+                    (inputData) => /no/i.test(inputData['diagnosis-t2dm']['Hypoglycaemia awareness']),
                 ],
                 suggestions: [
                     {
-                        name: "Consider endocrinology referral for pre-operative optimisation",
-                        citation: 'ads-anzca-2022',
+                        name: "Endocrinology referral for pre-operative optimisation",
+                        citation: 'ads-anzca-2022-referral-advice',
                     },
                 ],
             },
@@ -461,12 +462,13 @@ let boneData = [
             {
                 matchStrategy: "any",
                 matchRules: [
-                    (inputData) => parseFloat(inputData['hba1c']) >= 9.1,
+                    (inputData) => parseFloat(inputData['hba1c']) > 9.0,
+                    (inputData) => /no/i.test(inputData['diagnosis-t1dm']['Hypoglycaemia awareness']),
                 ],
                 suggestions: [
                     {
-                        name: "Consider endocrinology referral for pre-operative optimisation",
-                        citation: 'ads-anzca-2022',
+                        name: "Endocrinology referral for pre-operative optimisation",
+                        citation: 'ads-anzca-2022-referral-advice',
                     },
                 ],
             },
@@ -815,7 +817,7 @@ let boneData = [
         ],
         defaultSuggestions: [
             {
-                name: "Consider referral for optimisation of asthma control",
+                name: "Referral for optimisation of asthma control",
             },
         ],
         conditionalSuggestions: [

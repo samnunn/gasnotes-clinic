@@ -2773,6 +2773,15 @@ let citationSnippets = [
         publication: 'ads-anzca-2022'
     },
     {
+        id: 'ads-anzca-2022-referral-advice',
+        body: `<p>The 2022 ADA-ANZCA guidelines recommend endocrinology referral for patients with:</p>
+        <ul>
+            <li>HbA1c > 9.0%</li>
+            <li>Hypoglycaemia unawareness</li>
+        </ul>`,
+        publication: 'ads-anzca-2022'
+    },
+    {
         id: 'sort-calculator-explanation',
         body: `<p>The Surgical Outcome Risk Tool (SORT) is designed to estimate 30-day mortality after surgery.</p>
         <p>It was created using 16,788 cases from the <a href="https://www.ncepod.org.uk/">NCEPOD</a> database and later validated by <a href="https://doi.org/10.1371/journal.pmed.1003253">Wong et al.</a> against 22,631 cases from Australia, New Zealand, and the United Kinddom.</p>`,
