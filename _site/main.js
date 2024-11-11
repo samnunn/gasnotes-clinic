@@ -832,18 +832,23 @@ smokingInput.addEventListener('input', (e) => {
 //   | |_| | (_) \ V  V /| | | | | (_) | (_| | (_| |  __/ |                        
 //   |____/ \___/ \_/\_/ |_| |_|_|\___/ \__,_|\__,_|\___|_|                        
 
-function downloadDocument() {
-    let formattedDate = new Date().toISOString().slice(0,10)
-
-    // Fabricate a filename (date + UMRN)
-    let filename = `${formattedDate} ${document.querySelector('#umrn')?.value || 'Clinic Patient'}.txt`
-
+function renderEntireDocument() {
     // Create a text dump
     let textDump = ''
     for (let s of document.querySelectorAll('section')) {
         let renderedTemplate = getRenderedSection(s.id)
         textDump += renderedTemplate.trim() + '\n\n'
     }
+    return textDump
+}
+
+function downloadDocument() {
+    let formattedDate = new Date().toISOString().slice(0,10)
+
+    // Fabricate a filename (date + UMRN)
+    let filename = `${formattedDate} ${document.querySelector('#umrn')?.value || 'Clinic Patient'}.txt`
+
+    textDump = renderEntireDocument()
 
     // Create sham download link
 	let downloadLink = document.createElement('a')
@@ -858,6 +863,11 @@ function downloadDocument() {
 
 document.querySelector('#download')?.addEventListener('click', (e) => {
     downloadDocument()
+})
+
+document.querySelector('#copy-note')?.addEventListener('click', (e) => {
+    let output = renderEntireDocument()
+    navigator.clipboard.writeText(output.trim())
 })
 
 // RESET
@@ -2170,6 +2180,11 @@ let allDiagnoses = [
         matchable_string: "pseudogout crystal arthropathy",
         name: "Pseudogout",
         id: "diagnosis-pseudogout",
+    },
+    {
+        matchable_string: "gallstones cholelithiasis",
+        name: "Cholelithiasis",
+        id: "diagnosis-cholelithiasis",
     },
 ]
 
