@@ -423,6 +423,23 @@ let boneData = [
                     },
                 ],
             },
+            {
+                matchStrategy: "any",
+                matchRules: [
+                    (inputData) => {
+                        if (inputData['hba1c'] == '' || inputData['hba1c'] == undefined) {
+                            return true 
+                        } else {
+                            return false
+                        }
+                    },
+                ],
+                suggestions: [
+                    {
+                        name: "Check HbA1c",
+                    },
+                ],
+            },
         ],
         severityGrades: [
         ],
@@ -450,6 +467,23 @@ let boneData = [
                     {
                         name: "Consider endocrinology referral for pre-operative optimisation",
                         citation: 'ads-anzca-2022',
+                    },
+                ],
+            },
+            {
+                matchStrategy: "any",
+                matchRules: [
+                    (inputData) => {
+                        if (inputData['hba1c'] == '' || inputData['hba1c'] == undefined) {
+                            return true 
+                        } else {
+                            return false
+                        }
+                    },
+                ],
+                suggestions: [
+                    {
+                        name: "Check HbA1c",
                     },
                 ],
             },
